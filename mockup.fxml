@@ -28,12 +28,12 @@
          <children>
             <ImageView id="account_id" accessibleHelp="account picture" accessibleRoleDescription="account picture" accessibleText="account picture" fitHeight="50.0" fitWidth="50.0" layoutX="51.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="29.0">
                <image>
-                  <Image url="@../../Downloads/soluzione%20esercizio%20JavaFXML%20(client%20mail)-20221117/resources/resources/org/prog3/lab/week7/main/images/account_icon.png" />
+                  <Image url="@Avatar-PNG-Images.png" />
                </image>
             </ImageView>
             <Label id="acoount_label" fx:id="account_lable" accessibleHelp="aside content wrapper" accessibleRoleDescription="aside content wrapper" accessibleText="lable for account username" layoutX="116.0" layoutY="45.0" text="account@email.dom" wrapText="true" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="45.0">
                <font>
-                  <Font name="Fira Sans Regular" size="14.0" />
+                  <Font name="System Bold" size="14.0" />
                </font>
             </Label>
             <Button id="write_email_btn" accessibleHelp="buttoncino per scrivere una email" accessibleRoleDescription="buttoncino per scrivere una email" accessibleText="buttoncino per scrivere una email" layoutX="30.0" layoutY="101.0" mnemonicParsing="false" text="Scrivi E-mail" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="101.0" />
@@ -56,34 +56,45 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label accessibleHelp="label della data di ricezione" accessibleRoleDescription="label della data di ricezione" accessibleText="label della data di ricezione" text="Data:" wrapText="true">
+                  <Label accessibleHelp="label della data di ricezione" accessibleRoleDescription="label della data di ricezione" accessibleText="label della data di ricezione" text="Data:" wrapText="true" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="emailReceiveDate" text="10 dic 2022" wrapText="true" GridPane.columnIndex="1">
+                  <Label fx:id="emailReceiveDate" text="10 dic 2022" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Italic" size="13.0" />
                      </font>
                   </Label>
-                  <Label accessibleHelp="label del mittente dell'email" accessibleRoleDescription="label del mittente dell'email" accessibleText="label del mittente dell'email" text="Mittente:" wrapText="true" GridPane.rowIndex="1">
+                  <Label accessibleHelp="label del mittente dell'email" accessibleRoleDescription="label del mittente dell'email" accessibleText="label del mittente dell'email" text="Mittente:" wrapText="true" GridPane.rowIndex="2">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="emailMittente" text="Mario Luciani" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Label fx:id="emailMittente" text="Mario Luciani" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font name="System Italic" size="13.0" />
                      </font>
                   </Label>
-                  <Label accessibleHelp="label oggetto del messaggio" accessibleRoleDescription="label oggetto del messaggio" accessibleText="label oggetto del messaggio" text="Oggetto:" wrapText="true" GridPane.rowIndex="2">
+                  <Label accessibleHelp="label oggetto del messaggio" accessibleRoleDescription="label oggetto del messaggio" accessibleText="label oggetto del messaggio" text="Oggetto:" wrapText="true">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="emailOggetto" text="Avvio Tirocinio Merico Michele" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Label fx:id="emailOggetto" text="Avvio Tirocinio Merico Michele" wrapText="true" GridPane.columnIndex="1">
+                     <font>
+                        <Font name="System Italic" size="13.0" />
+                     </font>
+                  </Label>
+                  <Label accessibleHelp="label oggetto del messaggio" accessibleRoleDescription="label oggetto del messaggio" accessibleText="label oggetto del messaggio" text="Destinitari:" wrapText="true" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="emailMittente1" text="D1, D2" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font name="System Italic" size="13.0" />
                      </font>
@@ -105,19 +116,19 @@
             </ScrollPane>
          </center>
          <bottom>
-            <GridPane BorderPane.alignment="CENTER">
+            <GridPane BorderPane.alignment="CENTER_LEFT">
               <columnConstraints>
                 <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" text="Rispondi" GridPane.halignment="RIGHT" />
-                  <Button mnemonicParsing="false" text="Inoltra" GridPane.columnIndex="1" />
-                  <Button mnemonicParsing="false" text="Elimina" GridPane.columnIndex="2" />
+                  <Button mnemonicParsing="false" text="Rispondi" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                  <Button mnemonicParsing="false" text="Inoltra" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                  <Button mnemonicParsing="false" text="Elimina" GridPane.halignment="CENTER" />
                </children>
                <BorderPane.margin>
                   <Insets top="5.0" />
