@@ -108,7 +108,7 @@
          <center>
             <ScrollPane accessibleHelp="scrollable area per il testo del messaggio" accessibleRoleDescription="scrollable area per il testo del messaggio" accessibleText="scrollable area per il testo del messaggio" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
                <content>
-                  <TextArea prefHeight="432.0" prefWidth="451.0" text="Salve,&#10;&#10;Posso confermare che la pratica e' stata avviata con successo.&#10;Cordialmente,&#10;&#10;Samuele P." />
+                  <TextArea prefHeight="400.0" prefWidth="451.0" text="Salve,&#10;&#10;Posso confermare che la pratica e' stata avviata con successo.&#10;Cordialmente,&#10;&#10;Samuele P." />
                </content>
                <BorderPane.margin>
                   <Insets top="10.0" />
