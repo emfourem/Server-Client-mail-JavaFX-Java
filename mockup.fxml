@@ -16,29 +16,29 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<HBox id="hbox_main" accessibleHelp="main content container" accessibleRoleDescription="parent of content" accessibleText="main content container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="3.0" style="-fx-background-color: #f3f3f3;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<HBox id="hbox_main" fx:id="clientContentWrapper" accessibleHelp="main content container" accessibleRoleDescription="parent of content" accessibleText="main content container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="3.0" style="-fx-background-color: #f3f3f3;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <padding>
       <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
    </padding>
    <children>
-      <AnchorPane id="aside_wrapper" accessibleHelp="aside content wrapper" accessibleRoleDescription="aside content wrapper" accessibleText="aside content wrapper" prefWidth="300.0" style="-fx-background-color: #d2d5db;">
+      <AnchorPane id="aside_wrapper" fx:id="emailContentAchorPane" accessibleHelp="aside content wrapper" accessibleRoleDescription="aside content wrapper" accessibleText="aside content wrapper" prefWidth="300.0" style="-fx-background-color: #d2d5db;">
          <HBox.margin>
             <Insets />
          </HBox.margin>
          <children>
-            <ImageView id="account_id" accessibleHelp="account picture" accessibleRoleDescription="account picture" accessibleText="account picture" fitHeight="50.0" fitWidth="50.0" layoutX="51.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="29.0">
+            <ImageView id="account_id" fx:id="accountDummyImg" accessibleHelp="account picture" accessibleRoleDescription="account picture" accessibleText="account picture" fitHeight="50.0" fitWidth="50.0" layoutX="51.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="29.0">
                <image>
                   <Image url="@Avatar-PNG-Images.png" />
                </image>
             </ImageView>
-            <Label id="acoount_label" fx:id="account_lable" accessibleHelp="aside content wrapper" accessibleRoleDescription="aside content wrapper" accessibleText="lable for account username" layoutX="116.0" layoutY="45.0" text="account@email.dom" wrapText="true" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="45.0">
+            <Label id="acoount_label" fx:id="accountLabel" accessibleHelp="aside content wrapper" accessibleRoleDescription="aside content wrapper" accessibleText="lable for account username" layoutX="116.0" layoutY="45.0" text="account@email.dom" wrapText="true" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="45.0">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Button id="write_email_btn" accessibleHelp="buttoncino per scrivere una email" accessibleRoleDescription="buttoncino per scrivere una email" accessibleText="buttoncino per scrivere una email" layoutX="30.0" layoutY="101.0" mnemonicParsing="false" text="Scrivi E-mail" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="101.0" />
-            <Button id="write_email_btn" accessibleHelp="buttoncino per eliminare tutti i messaggi" accessibleRoleDescription="buttoncino per eliminare tutti i messaggi" accessibleText="buttoncino per eliminare tutti i messaggi" layoutX="157.0" layoutY="101.0" mnemonicParsing="false" text="Svuota casella" textAlignment="CENTER" wrapText="true" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="101.0" />
-            <ScrollPane accessibleHelp="lista dei messaggi ricevuti" accessibleRoleDescription="lista dei messaggi ricevuti" accessibleText="lista dei messaggi ricevuti" hbarPolicy="NEVER" layoutX="5.0" layoutY="137.0" prefHeight="443.0" prefWidth="287.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="140.0">
+            <Button id="write_email_btn" fx:id="writeEmailBtn" accessibleHelp="buttoncino per scrivere una email" accessibleRoleDescription="buttoncino per scrivere una email" accessibleText="buttoncino per scrivere una email" layoutX="30.0" layoutY="101.0" minWidth="90.0" mnemonicParsing="false" text="Write e-mail" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="101.0" />
+            <Button id="write_email_btn" fx:id="deleteAllBtn" accessibleHelp="buttoncino per eliminare tutti i messaggi" accessibleRoleDescription="buttoncino per eliminare tutti i messaggi" accessibleText="buttoncino per eliminare tutti i messaggi" layoutX="174.0" layoutY="101.0" minWidth="95.0" mnemonicParsing="false" text="Delete all" textAlignment="CENTER" wrapText="true" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="101.0" />
+            <ScrollPane fx:id="emailListScrollPane" accessibleHelp="lista dei messaggi ricevuti" accessibleRoleDescription="lista dei messaggi ricevuti" accessibleText="lista dei messaggi ricevuti" hbarPolicy="NEVER" layoutX="5.0" layoutY="137.0" prefHeight="443.0" prefWidth="287.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="140.0">
                <content>
                   <ListView id="email_list_view" fx:id="receivedEmailsListView" accessibleHelp="lista dei messaggi ricevuti" accessibleRoleDescription="lista dei messaggi ricevuti" accessibleText="lista dei messaggi ricevuti" prefHeight="447.0" prefWidth="288.0" style="-fx-background-color: white;" />
                </content>
@@ -47,7 +47,7 @@
       </AnchorPane>
       <BorderPane id="emai_content_wrapper" fx:id="emailContentBorderPane" accessibleHelp="wrapper for email contetn" accessibleRoleDescription="wrapper for email contetn" accessibleText="wrapper for email contetn" prefWidth="495.0" style="-fx-background-color: #e0e3e9;">
          <top>
-            <GridPane BorderPane.alignment="CENTER_RIGHT">
+            <GridPane fx:id="emailDataGridPane" BorderPane.alignment="CENTER_RIGHT">
               <columnConstraints>
                 <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="283.0" minWidth="10.0" percentWidth="40.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="382.0" minWidth="10.0" percentWidth="83.0" />
@@ -59,42 +59,42 @@
                   <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label accessibleHelp="label della data di ricezione" accessibleRoleDescription="label della data di ricezione" accessibleText="label della data di ricezione" text="Data:" wrapText="true" GridPane.rowIndex="1">
+                  <Label fx:id="dateLabel" accessibleHelp="label della data di ricezione" accessibleRoleDescription="label della data di ricezione" accessibleText="label della data di ricezione" text="Date:" wrapText="true" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="emailReceiveDate" text="10 dic 2022" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Label fx:id="dateDataLabel" text="10 dec 2022" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Italic" size="13.0" />
                      </font>
                   </Label>
-                  <Label accessibleHelp="label del mittente dell'email" accessibleRoleDescription="label del mittente dell'email" accessibleText="label del mittente dell'email" text="Mittente:" wrapText="true" GridPane.rowIndex="2">
+                  <Label fx:id="senderLabel" accessibleHelp="label del mittente dell'email" accessibleRoleDescription="label del mittente dell'email" accessibleText="label del mittente dell'email" text="Sender:" wrapText="true" GridPane.rowIndex="2">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="emailMittente" text="Mario Luciani" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Label fx:id="senderDataLabel" text="Mario Luciani" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font name="System Italic" size="13.0" />
                      </font>
                   </Label>
-                  <Label accessibleHelp="label oggetto del messaggio" accessibleRoleDescription="label oggetto del messaggio" accessibleText="label oggetto del messaggio" text="Oggetto:" wrapText="true">
+                  <Label fx:id="emailObjectLabel" accessibleHelp="label oggetto del messaggio" accessibleRoleDescription="label oggetto del messaggio" accessibleText="label oggetto del messaggio" text="Object:" wrapText="true">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="emailOggetto" text="Avvio Tirocinio Merico Michele" wrapText="true" GridPane.columnIndex="1">
+                  <Label fx:id="emailObjectDataLabel" text="Avvio Tirocinio Merico Michele" wrapText="true" GridPane.columnIndex="1">
                      <font>
                         <Font name="System Italic" size="13.0" />
                      </font>
                   </Label>
-                  <Label accessibleHelp="label oggetto del messaggio" accessibleRoleDescription="label oggetto del messaggio" accessibleText="label oggetto del messaggio" text="Destinitari:" wrapText="true" GridPane.rowIndex="3">
+                  <Label fx:id="receiverLabel" accessibleHelp="label oggetto del messaggio" accessibleRoleDescription="label oggetto del messaggio" accessibleText="label oggetto del messaggio" text="Receivers:" wrapText="true" GridPane.rowIndex="3">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="emailMittente1" text="D1, D2" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Label fx:id="receiverDataLabel" text="Mario rossi, Luca Verdi, Luca Arancioni" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font name="System Italic" size="13.0" />
                      </font>
@@ -106,9 +106,9 @@
             <Insets bottom="5.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <center>
-            <ScrollPane accessibleHelp="scrollable area per il testo del messaggio" accessibleRoleDescription="scrollable area per il testo del messaggio" accessibleText="scrollable area per il testo del messaggio" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="emailScrollPane" accessibleHelp="scrollable area per il testo del messaggio" accessibleRoleDescription="scrollable area per il testo del messaggio" accessibleText="scrollable area per il testo del messaggio" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
                <content>
-                  <TextArea prefHeight="400.0" prefWidth="451.0" text="Salve,&#10;&#10;Posso confermare che la pratica e' stata avviata con successo.&#10;Cordialmente,&#10;&#10;Samuele P." />
+                  <TextArea fx:id="emailTextArea" prefHeight="400.0" prefWidth="451.0" text="Salve,&#10;&#10;Posso confermare che la pratica e' stata avviata con successo.&#10;Cordialmente,&#10;&#10;Samuele P.&#10;" />
                </content>
                <BorderPane.margin>
                   <Insets top="10.0" />
@@ -116,19 +116,21 @@
             </ScrollPane>
          </center>
          <bottom>
-            <GridPane BorderPane.alignment="CENTER_LEFT">
+            <GridPane fx:id="emailControlsGridPane" alignment="CENTER">
               <columnConstraints>
-                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" text="Rispondi" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-                  <Button mnemonicParsing="false" text="Inoltra" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-                  <Button mnemonicParsing="false" text="Elimina" GridPane.halignment="CENTER" />
+                  <Button fx:id="replyBtn" minWidth="80.0" mnemonicParsing="false" text="Reply" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                  <Button fx:id="forwardBtn" minWidth="80.0" mnemonicParsing="false" text="Forward" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
+                  <Button fx:id="deleteBtn" minWidth="80.0" mnemonicParsing="false" text="Delete" GridPane.halignment="CENTER" />
+                  <Button fx:id="replyAllBtn" minWidth="80.0" mnemonicParsing="false" text="Reply All" GridPane.columnIndex="2" />
                </children>
                <BorderPane.margin>
                   <Insets top="5.0" />
