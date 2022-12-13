@@ -1,12 +1,14 @@
 package com.project.emailclient.model;
 
 import com.project.emailclient.controller.HelloController;
+import com.project.model.Email;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -17,10 +19,10 @@ public class MailClient {
   // JAVAFX UI COMPONENTS
   // CONTROLLER
   private final HelloController controller;
-  private final ObservableList<String> inboxContent;
-  private final SimpleListProperty<String> inbox;
+  private final ObservableList<Email> inboxContent;
+  private final SimpleListProperty<Email> inbox;
   // MY VARIABLES
-  private final SimpleStringProperty email;
+  private final SimpleStringProperty emailAddress;
   // NETWORK VARIABLES
   private Socket socket;
   private InputStream in;
@@ -30,7 +32,7 @@ public class MailClient {
     this.inbox = new SimpleListProperty<>();
     this.inboxContent = FXCollections.observableArrayList(new LinkedList<>());
     this.inbox.set(inboxContent);
-    this.email = new SimpleStringProperty(email);
+    this.emailAddress = new SimpleStringProperty(email);
     this.controller = controller;
   }
 
@@ -42,17 +44,22 @@ public class MailClient {
       System.out.println("connessione riuscita");
       // comunico il mio nickname
       ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-      objectOutputStream.writeObject(this.getEmail());
+      objectOutputStream.writeObject(this.getEmailAddress());
       objectOutputStream.flush();
       // objectOutputStream.close();
       //
       // ricevo la lista delle mail sotto forma di ArrayList
       ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-      ArrayList<String> inboxArrayList = (ArrayList<String>) objectInputStream.readObject();
+      ArrayList<Email> inboxArrayList = (ArrayList<Email>) objectInputStream.readObject();
       inboxArrayList.forEach(System.out::println);
+      inboxArrayList.forEach(this::addEmail);
+
       // avviso la GUI
 
-    } catch (IOException e) {
+    } catch (ConnectException ce) {
+      System.out.println("Server offline");
+    }
+    catch (IOException e) {
       // qui se non riesco a collegarmi al server
       e.printStackTrace();
     } catch (ClassNotFoundException e) {
@@ -60,22 +67,31 @@ public class MailClient {
     }
   }
 
-  public String getEmail() {
-    return email.get();
+  public String getEmailAddress() {
+    return emailAddress.get();
   }
 
-  public SimpleStringProperty emailProperty() {
-    return email;
+  public SimpleStringProperty emailAddressProperty() {
+    return emailAddress;
   }
 
-  public SimpleListProperty<String> inboxProperty() {
+  public SimpleListProperty<Email> inboxProperty() {
     return inbox;
   }
 
-  public void addEmail(String email) {
+  public void addEmail(Email email) {
     this.inboxContent.add(email);
   }
   public void sendEmailToServer() {
     System.out.println("INVIO...");
+  }
+
+  public void emptyInbox() {
+    // usare con cautela
+    this.inboxContent.clear();
+  }
+
+  public void deleteEmailById(Email e) {
+    this.inboxContent.remove(e);
   }
 }

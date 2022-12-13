@@ -10,6 +10,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 public class MailService extends Thread{
   private int port;
@@ -59,16 +61,12 @@ public class MailService extends Thread{
         });
         
         // mock: invio email di prova
-        
-        ArrayList<String> l = new ArrayList<>();
-        l.add("Email1");
-        l.add("Email2");
-        l.add("Email3");
 
         // invio la lista
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(client.getOutputStream());
         // objectOutputStream.flush();
-        objectOutputStream.writeObject(l);
+        ArrayList<Email> emails = dummyEmails();
+        objectOutputStream.writeObject(emails);
         objectOutputStream.flush();
         // objectOutputStream.close();
         
@@ -85,5 +83,18 @@ public class MailService extends Thread{
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  public ArrayList<Email> dummyEmails() {
+    ArrayList<Email> emails = new ArrayList<>();
+    Email e1 = new Email(1, "mario.rossi@gmail.com", Arrays.asList("luca.verdi@uni.it", "marco.marroni@unito.it", "marco.pironti.botta@unito.it"), "Oggetto della mia mail", "Testo del messaggio", new Date());
+    Email e2 = new Email(2, "alberto.marino@gmail.com", Arrays.asList("luca.verdi@uni.it", "marco.pironti.botta@unito.it"), "Oggetto della mia mail", "Testo del messaggio", new Date());
+    Email e3 = new Email(3, "antonio.pesce@gmail.com", Arrays.asList("marco.pironti.botta@unito.it"), "Oggetto della mia mail", "Testo del messaggio", new Date());
+
+    emails.add(e1);
+    emails.add(e2);
+    emails.add(e3);
+
+    return emails;
   }
 }

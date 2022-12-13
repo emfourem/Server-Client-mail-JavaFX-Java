@@ -8,9 +8,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
 
 public class HelloApplication extends Application {
   @Override
@@ -20,6 +17,7 @@ public class HelloApplication extends Application {
     ServerController controller = fxmlLoader.getController();
     Client c = new Client("MARIO");
     controller.initialize(c);
+    // TODO(se chiudo gui, server va in STOP!!!)
     MailService service = new MailService(6789, controller);
     service.start();
     stage.setTitle("Server Logger!");

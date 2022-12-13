@@ -30,9 +30,9 @@
             <Label text="To:" />
             <Label text="Object:" GridPane.rowIndex="1" />
             <Label text="From:" GridPane.rowIndex="2" />
-            <TextField fx:id="sendToTextField" prefHeight="25.0" prefWidth="256.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField editable="false" text="filippo.marinetti@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField prefHeight="25.0" prefWidth="256.0" GridPane.columnIndex="1" />
+            <TextField fx:id="objectEmailTextField"  prefHeight="25.0" prefWidth="256.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="fromEmailTextField" editable="false" text="filippo.marinetti@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="sendToTextField" prefHeight="25.0" prefWidth="256.0" GridPane.columnIndex="1" promptText="email1@dom.com, email2@email.com"/>
          </children>
          <opaqueInsets>
             <Insets />
@@ -42,7 +42,7 @@
          </padding>
       </GridPane>
       <Separator prefWidth="200.0" />
-      <TextArea prefHeight="352.0" prefWidth="600.0" />
+      <TextArea fx:id="emailBodyTextArea" prefHeight="352.0" prefWidth="600.0" />
       <HBox alignment="CENTER" prefHeight="49.0" prefWidth="600.0">
          <children>
             <Button fx:id="cancelEmailBtn" onAction="#onCancelEmail" mnemonicParsing="false" text="Cancel">
