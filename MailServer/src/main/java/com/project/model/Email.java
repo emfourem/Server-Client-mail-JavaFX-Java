@@ -39,6 +39,15 @@ public class Email implements Serializable {
         this.date = new SimpleDateFormat("dd/MM/yyyy").format(date);
     }
 
+    public Email(String sender){
+        this.id = -1;
+        this.sender = sender;
+        this.receivers = null;
+        this.object = "";
+        this.text = "";
+        this.date = null;
+    }
+
     public long getId() {
         return id;
     }

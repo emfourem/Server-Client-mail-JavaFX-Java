@@ -23,15 +23,17 @@ public class ServerController {
             throw new IllegalStateException("client model e' gia' inizializzato");
         }
         this.clientModel = clientModel;
-        clientModel.addEmail("PIPPPPOOOOO");
-        clientModel.addEmail("PIPPPPOOOOO");
-        clientModel.addEmail("PIPPPPOOOOO");
         idListView.itemsProperty().bind(clientModel.inboxProperty());
     }
 
     @FXML
     public void logNewConnection(String newConnection) {
         this.logTextArea.appendText(newConnection + "\n");
+    }
+
+    @FXML
+    public void logLostConnection(String lostConnection) {
+        this.logTextArea.appendText(lostConnection + "\n");
     }
 
     @FXML

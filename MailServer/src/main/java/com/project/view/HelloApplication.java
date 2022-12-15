@@ -18,6 +18,7 @@ public class HelloApplication extends Application {
     Client c = new Client("MARIO");
     controller.initialize(c);
     // TODO(se chiudo gui, server va in STOP!!!)
+    //closeServer...
     MailService service = new MailService(6789, controller);
     service.start();
     stage.setTitle("Server Logger!");
