@@ -16,7 +16,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         HelloController controller = fxmlLoader.getController();
         controller.initialize(new MailClient("marco.pironti.botta@unito.it", controller));
-        stage.setTitle("Hello!");
+        stage.setTitle("MailClient");
         stage.setScene(scene);
         stage.show();
     }

@@ -37,15 +37,16 @@ public class MailClient {
   }
 
   public void connectToServer() {
-     // TODO: gestire N tentativi, dopo seganal l'errore
+     // TODO: gestire N tentativi, dopo segnala l'errore
     // tentativo di collegarsi al mail server
     try {
       socket = new Socket(InetAddress.getByName(null), MAIL_SERVER_PORT);
       System.out.println("connessione riuscita");
-      // comunico il mio nickname
       ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-      objectOutputStream.writeObject(this.getEmailAddress());
-      objectOutputStream.flush();
+      // comunico il mio nickname
+      Email email=new Email(this.getEmailAddress());
+      objectOutputStream.writeObject(email);
+      objectOutputStream.flush(); //forza l'invio
       // objectOutputStream.close();
       //
       // ricevo la lista delle mail sotto forma di ArrayList

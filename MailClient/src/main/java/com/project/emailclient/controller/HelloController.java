@@ -92,6 +92,7 @@ public class HelloController {
       emailObjectDataLabel.setText(email.getObject());
       if (email.getId() == -1) {
         dateDataLabel.setText("");
+        disableAllEmailBtns(true);
       } else {
         dateDataLabel.setText(email.getDate());
       }
@@ -125,7 +126,6 @@ public class HelloController {
     System.out.println("Elimino la casella");
     mailClient.emptyInbox();
     updateDetailView(emptyEmail);
-    disableAllEmailBtns(true);
   }
 
   @FXML
