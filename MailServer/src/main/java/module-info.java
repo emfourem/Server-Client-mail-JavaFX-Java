@@ -1,8 +1,11 @@
-module com.project.emailserver {
-    requires javafx.controls;
-    requires javafx.fxml;
+module com.unito.prog3.progetto.mailserver.mailserver {
+  requires javafx.controls;
+  requires javafx.fxml;
 
 
-    opens com.project.view to javafx.fxml;
-    exports com.project.view;
+  opens com.unito.prog3.progetto.mailserver to javafx.fxml;
+  exports com.unito.prog3.progetto.mailserver;
+
+  opens com.unito.prog3.progetto.mailserver.controller to javafx.fxml;
+  exports com.unito.prog3.progetto.mailserver.controller;
 }

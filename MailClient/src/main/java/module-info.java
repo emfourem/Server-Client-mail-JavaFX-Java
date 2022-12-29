@@ -1,10 +1,11 @@
-module com.example.emailclient {
-    requires javafx.controls;
-    requires javafx.fxml;
+module com.unito.prog3.progetto.client.mailclient {
+  requires javafx.controls;
+  requires javafx.fxml;
 
 
-    opens com.project.emailclient to javafx.fxml;
-    exports com.project.emailclient;
-  exports com.project.emailclient.controller;
-  opens com.project.emailclient.controller to javafx.fxml;
+  opens com.unito.prog3.progetto.mailclient to javafx.fxml;
+  exports com.unito.prog3.progetto.mailclient;
+
+  opens com.unito.prog3.progetto.mailclient.controller to javafx.fxml;
+  exports com.unito.prog3.progetto.mailclient.controller;
 }
