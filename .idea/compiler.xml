@@ -6,13 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="emailClient" />
-        <module name="emailServer" />
+        <module name="MailServer" />
+        <module name="MailClient" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="emailClient" target="17" />
       <module name="emailServer" target="17" />
+      <module name="MailClient" target="17" />
+      <module name="MailServer" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>
