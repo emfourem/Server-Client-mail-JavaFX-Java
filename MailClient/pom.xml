@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.unito.prog3.progetto.client</groupId>
+    <groupId>com.unito.prog3.progetto.mailclient</groupId>
     <artifactId>MailClient</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>MailClient</name>
@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.unito.prog3.progetto.client.mailclient/com.unito.prog3.progetto.mailclient.HelloApplication
+                                com.unito.prog3.progetto.mailserver.mailserver/com.unito.prog3.progetto.mailserver.HelloApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

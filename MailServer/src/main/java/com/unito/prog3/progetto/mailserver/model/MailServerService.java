@@ -5,6 +5,7 @@ import com.unito.prog3.progetto.mailserver.controller.ServerGuiController;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,7 @@ public class MailServerService extends Thread{
   private ServerGuiController guiController;
   ExecutorService executorService;
   ServerSocket serverSocket;
+  private boolean isServiceOn = true;
 
   private final int CORE_MACHINES = 16; //number of cores
 
@@ -62,12 +64,14 @@ public class MailServerService extends Thread{
     try {
       serverSocket = new ServerSocket(port);
       executorService= Executors.newFixedThreadPool(CORE_MACHINES);
-      while (true) {
+      while (isServiceOn) {
         Socket client = serverSocket.accept();
         System.out.println("accettato: " + client);
         Runnable task = new MailServerClientWorker(client, guiController);
         executorService.execute(task);
       }
+    } catch (SocketException socketException) {
+      System.out.println("GUI del server e' chiusa, chiudo anche la server socket");
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -90,6 +94,12 @@ public class MailServerService extends Thread{
 
   public void guiIsClosing() {
     System.out.println("Chiudo la gui del SERVER...");
+    this.isServiceOn = false;
+    try {
+      this.serverSocket.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     this.shutdownMailServerService();
     if (!this.isInterrupted())  {
       this.interrupt();

@@ -7,10 +7,7 @@ import com.unito.prog3.progetto.model.Email;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -55,12 +52,18 @@ public class ClientGuiController {
   @FXML
   private Button replyAllBtn;
 
-  // TODO(gestire stato finestra di invio mail -> introdurro flag stato)
   //
   private ClientController clientController;
   private ClientMailbox mailbox;
   private Email selectedEmail;
   private Email emptyEmail;
+
+  // child
+  Stage stage1 = null;
+  Alert alert = null;
+  Alert alertNewMessage = null;
+  boolean alertOnes = true;
+  NewEmailGuiController childController;
 
   @FXML
   public void initialize(ClientController controller){
@@ -70,7 +73,7 @@ public class ClientGuiController {
     accountLabel.setText(this.mailbox.getEmailAddress());
     emailTextArea.setEditable(false);
     receivedEmailsListView.setOnMouseClicked(this::showSelectedEmail);
-    era: receivedEmailsListView.itemsProperty().bind(mailbox.inboxProperty());
+    receivedEmailsListView.itemsProperty().bind(mailbox.inboxProperty());
     emptyEmail = new Email(-1, "", Arrays.asList(""), "", "", new Date());
     // disabilito i bottoni
     disableAllEmailBtns(true);
@@ -82,6 +85,13 @@ public class ClientGuiController {
 
   protected void showSelectedEmail(MouseEvent mouseEvent) {
     Email email = receivedEmailsListView.getSelectionModel().getSelectedItem();
+
+    if (email.getStato().equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString())) {
+      // email.setStato(EmailStateEnum.MAIL_SEEN.toString());
+      Email seenMail = new Email(this.mailbox.getEmailAddress());
+      seenMail.setId(email.getId());
+      this.clientController.seenMail(seenMail, EmailStateEnum.MAIL_SEEN.toString());
+    }
 
     selectedEmail = email;
     updateDetailView(email);
@@ -105,7 +115,6 @@ public class ClientGuiController {
     }
   }
 
-  // TODO(gestire chiusura del figlio alla chiusura del parent)
   @FXML
   public void onWriteEmail() throws IOException {
     System.out.println("onWriteEmail");
@@ -116,6 +125,10 @@ public class ClientGuiController {
   @FXML
   public void onDeleteAllEmails() {
     System.out.println("Elimino la casella");
+    for (Email email : this.mailbox.inboxProperty().get()) {
+      System.out.println("Elimino: " + email);
+      clientController.deleteEmail(email);
+    }
     mailbox.emptyInbox();
     updateDetailView(emptyEmail);
   }
@@ -129,8 +142,9 @@ public class ClientGuiController {
   @FXML
   public void onDeleteEmail() {
     mailbox.deleteEmail(selectedEmail);
+    clientController.deleteEmail(selectedEmail);
     updateDetailView(emptyEmail);
-    disableControls(true);
+    disableControls(false);
   }
 
   @FXML
@@ -152,17 +166,41 @@ public class ClientGuiController {
     replyAllBtn.setDisable(flag);
   }
 
+  public void resetAlert() {
+    this.alert = null;
+  }
+
+  public void alertInformation() {
+    if (alert == null) {
+      alertOnes = false;
+      alert = new Alert(Alert.AlertType.WARNING);
+      alert.setHeaderText("Connection to server failed!");
+      alert.setContentText("Buttons will be enabled, once server is UP... be patient");
+      alert.setTitle("Mail Service Warning");
+      alert.showAndWait();
+    }
+  }
+
+  public void alertNewMessage(String s) {
+    // if (alertNewMessage != null) {
+      alertNewMessage = new Alert(Alert.AlertType.INFORMATION);
+      alertNewMessage.setHeaderText("New Message Received!");
+      alertNewMessage.setContentText("New message received from " + s);
+      alertNewMessage.setTitle("New Message Notification");
+      alertNewMessage.show();
+    // }
+  }
+
   protected void launchNewEmailGui(EmailStateEnum c, Email e) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(ClientApplication.class.getResource("new_email_gui_mockup.fxml"));
-    Stage stage1 = new Stage();
+    stage1 = new Stage();
     Scene scene = new Scene(fxmlLoader.load(), 800, 600);
     stage1.setTitle(c.name());
     stage1.setScene(scene);
-    NewEmailGuiController controller = fxmlLoader.getController();
-    controller.initialize(mailbox, c, e, clientController);
+    childController = fxmlLoader.getController();
+    childController.initialize(mailbox, c, e, clientController);
     stage1.setOnCloseRequest(event -> {
       disableControls(false);
-
     });
     stage1.setOnHiding(event -> {
       disableControls(false);
@@ -175,5 +213,14 @@ public class ClientGuiController {
     disableAllEmailBtns(flag);
     writeEmailBtn.setDisable(flag);
     deleteAllBtn.setDisable(flag);
+    if (childController != null) {
+      childController.disableBts(flag);
+    }
+  }
+
+  public void closeAllChildren() {
+    if (this.stage1 != null && stage1.isShowing()) {
+      stage1.close();
+    }
   }
 }

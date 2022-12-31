@@ -3,6 +3,7 @@ module com.unito.prog3.progetto.client.mailclient {
   requires javafx.fxml;
 
 
+
   opens com.unito.prog3.progetto.mailclient to javafx.fxml;
   exports com.unito.prog3.progetto.mailclient;
 

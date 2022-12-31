@@ -10,6 +10,10 @@ import java.util.List;
  * Represents a email
  */
 
+// TODO: (1) Delete + Delete All
+// TODO: fare il controllo sulla forma dei messaggi
+
+
 public class Email implements Serializable {
   private static final long serialVersionUID = 1L;
   private long id;
@@ -40,7 +44,7 @@ public class Email implements Serializable {
     this.receivers = receivers;
     this.object = object;
     this.text = text;
-    this.date = new SimpleDateFormat("dd/MM/yyyy").format(date);
+    this.date = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(date); // >> Gmail
     this.stato = "not_seen";
   }
 
@@ -108,6 +112,14 @@ public class Email implements Serializable {
 
   public void setDate(String date) {
     this.date = date;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Email nE = (Email) o;
+    return this.getId() == nE.getId();
   }
 
   /**

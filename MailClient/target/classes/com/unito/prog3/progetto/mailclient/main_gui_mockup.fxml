@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<HBox fx:id="clientContentWrapper" accessibleHelp="main content container" accessibleRoleDescription="parent of content" accessibleText="main content container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="3.0" style="-fx-background-color: #f3f3f3;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<HBox fx:id="clientContentWrapper" accessibleHelp="main content container" accessibleRoleDescription="parent of content" accessibleText="main content container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="3.0" style="-fx-background-color: #f3f3f3;" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.unito.prog3.progetto.mailclient.controller.ClientGuiController">
    <padding>
       <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />

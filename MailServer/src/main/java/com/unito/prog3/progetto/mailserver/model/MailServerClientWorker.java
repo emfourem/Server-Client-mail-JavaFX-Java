@@ -10,6 +10,7 @@ import javafx.application.Platform;
 
 import java.io.*;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -50,16 +51,27 @@ public class MailServerClientWorker extends Thread {
         });
 
       } else if (header.equalsIgnoreCase(ServiceHeaders.CONNECTION_CLOSED.toString())) {
+        // Email e = message.getEmail();
+        // ArrayList<Email> emails = (ArrayList<Email>) objectInputStream.readObject();
+        // MyFileWriterService.updateMailboxOf(e, emails);
         // aggiorno la gui
-
         Platform.runLater(() -> {
-          this.guiController.logLostConnection(socket.toString());
-          this.guiController.logLostClient(message.getEmail().getSender());
+          this.guiController.logLostConnection(socket.toString() + "\n");
+          this.guiController.logLostClient(message.getEmail().getSender() + "\n");
         });
       } else if (header.equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
         receiveMailThenStore(message.getEmail());
-      } else {
-        // unknown header
+      } else if (header.equalsIgnoreCase(ServiceHeaders.DELETE_EMAIL_BY_ID.toString())) {
+        MyFileWriterService.deleteEmail(message.getEmail());
+        // retrieveThenSendEmails(message.getEmail());
+      } else if (header.equalsIgnoreCase(ServiceHeaders.REQUEST_NEW_EMAILS.toString())) {
+        this.emailSender = message.getEmail().getSender();
+        retrieveThenSendEmails(message.getEmail());
+      } else if (header.equalsIgnoreCase(ServiceHeaders.REQUEST_MARK_EMAIL_AS_SEEN.toString())) {
+        this.emailSender = message.getEmail().getSender();
+        MyFileWriterService.markAs(message.getEmail(), ServiceHeaders.REQUEST_MARK_EMAIL_AS_SEEN.toString());
+      } else if (header.equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString())) {
+        MyFileWriterService.markAs(message.getEmail(), EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
       }
 
 
@@ -75,15 +87,39 @@ public class MailServerClientWorker extends Thread {
     System.out.println(email.getObject());
     System.out.println(email.getText());
     String dests = "";
-    for(String s: email.getReceivers()) {
+    for (String s : email.getReceivers()) {
       System.out.println("Dest: " + s);
       dests += " [ " + s + "] ";
     }
     String finalDests = dests;
     Platform.runLater(() -> {
-      this.guiController.logMessageSend("New message from [ " + email.getSender() + " ] to " + finalDests);
+      this.guiController.logMessageSend("New message from [ " + email.getSender() + " ] to " + finalDests + "\n");
+      this.guiController.logMessageSend("New message to [ " + finalDests + " ] from " + emailSender + "\n");
     });
-    MyFileWriterService.writeEmail(email);
+    ArrayList<String> notFound = MyFileWriterService.writeEmail(email);
+    if (notFound.size() > 0) {
+      writeNoReply(email.getSender(), notFound);
+    }
+  }
+
+  private void writeNoReply(String dest, ArrayList<String> notFound) throws IOException, ClassNotFoundException {
+    Email noReply = new Email("no_reply.progetto.prog3@server.it");
+    noReply.setReceivers(List.of(dest));
+    noReply.setObject("noReply: Receivers not found");
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("Dear Sender,\n\tThe following list contains not found receivers of your message:\n");
+    for (String s : notFound) {
+      stringBuilder.append("\t").append(s).append("\n");
+      Platform.runLater(() -> {
+        this.guiController.logMessageSend("Message from " + dest + " to " + s + " failed [ user not found ]\n");
+      });
+    }
+    stringBuilder.append("Cordially, \nTeam MMT\n");
+    noReply.setText(stringBuilder.toString());
+    noReply.setId(System.currentTimeMillis());
+    noReply.setStato(EmailStateEnum.NEW_EMAIL.toString());
+    noReply.setDate(new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(new Date()));
+    MyFileWriterService.writeEmail(noReply);
   }
 
   private void retrieveThenSendEmails(Email email) throws IOException, ClassNotFoundException {

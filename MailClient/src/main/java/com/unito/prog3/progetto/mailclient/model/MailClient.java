@@ -35,38 +35,6 @@ public class MailClient {
     this.controller = controller;
   }
 
-  public void connectToServer() {
-     // TODO: gestire N tentativi, dopo segnala l'errore
-    // tentativo di collegarsi al mail server
-    try {
-      socket = new Socket(InetAddress.getByName(null), MAIL_SERVER_PORT);
-      System.out.println("connessione riuscita");
-      ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-      // comunico il mio nickname
-      Email email=new Email(this.getEmailAddress());
-      objectOutputStream.writeObject(email);
-      objectOutputStream.flush(); //forza l'invio
-      // objectOutputStream.close();
-      //
-      // ricevo la lista delle mail sotto forma di ArrayList
-      ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-      ArrayList<Email> inboxArrayList = (ArrayList<Email>) objectInputStream.readObject();
-      inboxArrayList.forEach(System.out::println);
-      inboxArrayList.forEach(this::addEmail);
-
-      // avviso la GUI
-
-    } catch (ConnectException ce) {
-      System.out.println("Server offline");
-    }
-    catch (IOException e) {
-      // qui se non riesco a collegarmi al server
-      e.printStackTrace();
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    }
-  }
-
   public String getEmailAddress() {
     return emailAddress.get();
   }
