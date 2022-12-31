@@ -67,6 +67,10 @@ public class MailServerClientWorker extends Thread {
       } else if (header.equalsIgnoreCase(ServiceHeaders.REQUEST_NEW_EMAILS.toString())) {
         this.emailSender = message.getEmail().getSender();
         retrieveThenSendEmails(message.getEmail());
+        // aggiorno la gui
+        Platform.runLater(() -> {
+          this.guiController.logNewClient(this.emailSender);
+        });
       } else if (header.equalsIgnoreCase(ServiceHeaders.REQUEST_MARK_EMAIL_AS_SEEN.toString())) {
         this.emailSender = message.getEmail().getSender();
         MyFileWriterService.markAs(message.getEmail(), ServiceHeaders.REQUEST_MARK_EMAIL_AS_SEEN.toString());

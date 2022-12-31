@@ -4,6 +4,7 @@ import com.unito.prog3.progetto.mailclient.ClientApplication;
 import com.unito.prog3.progetto.mailclient.model.ClientMailbox;
 import com.unito.prog3.progetto.model.EmailStateEnum;
 import com.unito.prog3.progetto.model.Email;
+import com.unito.prog3.progetto.model.ServiceHeaders;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -87,10 +89,10 @@ public class ClientGuiController {
     Email email = receivedEmailsListView.getSelectionModel().getSelectedItem();
 
     if (email.getStato().equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString())) {
-      // email.setStato(EmailStateEnum.MAIL_SEEN.toString());
+      email.setStato(EmailStateEnum.MAIL_SEEN.toString());
       Email seenMail = new Email(this.mailbox.getEmailAddress());
       seenMail.setId(email.getId());
-      this.clientController.seenMail(seenMail, EmailStateEnum.MAIL_SEEN.toString());
+      this.clientController.seenMail(seenMail, ServiceHeaders.REQUEST_MARK_EMAIL_AS_SEEN.toString());
     }
 
     selectedEmail = email;
@@ -223,4 +225,24 @@ public class ClientGuiController {
       stage1.close();
     }
   }
+
+  public void updateEmailBold() {
+    receivedEmailsListView.setCellFactory(cell -> new ListCell<>(){
+      @Override
+      protected void updateItem(Email email, boolean empty) {
+        super.updateItem(email, empty);
+        if (!empty && email != null) {
+          setText(email.toString());
+          if (email.getStato().equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString()) || email.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
+            setStyle("-fx-font-weight: bold");
+          } else {
+            setStyle("-fx-font-weight: normal");
+          }
+        } else {
+          setText(null);
+        }
+      }
+    });
+  }
+
 }

@@ -21,7 +21,6 @@ public class ServerApplication extends Application {
     MailServerService service = new MailServerService(6789, controller);
     Client c = new Client("MARIO");
     controller.initialize(c, service);
-    // TODO(se chiudo gui, server va in STOP!!!)
     //closeServer...
     stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
       @Override

@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.regex.*;
@@ -81,8 +82,17 @@ public class NewEmailGuiController {
     String regex="^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}";
     Pattern pattern=Pattern.compile(regex);
     //gestire caso dei molteplici receivers
-    Matcher matcher=pattern.matcher(sendToTextField.getText());
-    if(matcher.matches()) {
+    String[] matcherReceivers = sendToTextField.getText().split(",");
+    String wrongEmailAddresses = "";
+    boolean flag = true;
+    for(String s : matcherReceivers) {
+      Matcher matcher=pattern.matcher(s);
+      if(!matcher.matches()) {
+        wrongEmailAddresses = wrongEmailAddresses.concat(s+"\n");
+        flag = false;
+      }
+    }
+    if(flag) {
       Email email = new Email();
       email.setId(System.currentTimeMillis());
       email.setSender(controller.getMailbox().getEmailAddress());
@@ -97,8 +107,9 @@ public class NewEmailGuiController {
       Alert alert=new Alert(Alert.AlertType.WARNING);
       alert.setHeaderText("Wrong email");
       alert.setTitle("Check Email");
-      alert.setContentText("Email entered is not a valid email address");
+      alert.setContentText("Email entered is not a valid email address:\n"+wrongEmailAddresses);
       alert.show();
+      sendToTextField.requestFocus();
     }
   }
 

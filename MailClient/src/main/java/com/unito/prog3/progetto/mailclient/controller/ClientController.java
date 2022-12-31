@@ -50,30 +50,32 @@ public class ClientController {
   public synchronized void pushMail(Email email) {
     if (mailbox.contains(email)) {
       if (email.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
+        email.setStato(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
+        Email seenMail = new Email(this.mailbox.getEmailAddress());
+        seenMail.setId(email.getId());
+        seenMail(seenMail, EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
         Platform.runLater(() -> {
-          email.setStato(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
-          Email seenMail = new Email(this.mailbox.getEmailAddress());
-          seenMail.setId(email.getId());
-          seenMail(seenMail, EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
           this.guiController.alertNewMessage(email.getSender());
         });
       }
     }
+    this.guiController.updateEmailBold();
     this.mailbox.addEmail(email);
   }
 
   public synchronized void pushIfNotPresent(Email email) {
     if (mailbox.contains(email)) {
       if (email.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
+        email.setStato(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
+        Email seenMail = new Email(this.mailbox.getEmailAddress());
+        seenMail.setId(email.getId());
+        seenMail(seenMail, EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
         Platform.runLater(() -> {
-          email.setStato(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
-          Email seenMail = new Email(this.mailbox.getEmailAddress());
-          seenMail.setId(email.getId());
-          seenMail(seenMail, EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
           this.guiController.alertNewMessage(email.getSender());
         });
       }
     }
+    this.guiController.updateEmailBold();
     this.mailbox.addEmailIfNotPresent(email);
   }
 
