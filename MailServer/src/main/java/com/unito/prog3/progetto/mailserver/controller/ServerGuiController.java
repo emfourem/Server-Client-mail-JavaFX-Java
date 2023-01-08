@@ -8,7 +8,6 @@ import javafx.scene.control.TextArea;
 
 public class ServerGuiController {
     private Client clientModel;
-    private String clientEmail;
     private MailServerService service;
 
     @FXML
@@ -18,11 +17,12 @@ public class ServerGuiController {
     private TextArea logTextArea;
 
 
+    //perché ci serve un client?
     @FXML
     public void initialize(Client clientModel, MailServerService service) {
         System.out.println("MY INIT");
         if (this.clientModel != null) {
-            throw new IllegalStateException("client model e' gia' inizializzato");
+            throw new IllegalStateException("Client is already defined");
         }
         this.clientModel = clientModel;
         this.service = service;
@@ -51,7 +51,6 @@ public class ServerGuiController {
             this.idListView.getItems().add(clientEmail);
         }
     }
-
     @FXML
     public void logMessageSend(String message) {
         this.logTextArea.appendText(message);

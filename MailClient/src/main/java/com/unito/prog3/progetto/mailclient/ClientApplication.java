@@ -22,12 +22,19 @@ public class ClientApplication extends Application {
     clientController = new ClientController();
     clientController.setGuiController(controller);
     controller.initialize(clientController);
+    //<WindowEvent can be replaced with <> or lambda expression
+    /*
     stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
       @Override
       public void handle(WindowEvent windowEvent) {
         controller.closeAllChildren();
         clientController.guiIsClosing();
       }
+    });
+     */
+    stage.setOnCloseRequest(windowEvent -> {
+      controller.closeAllChildren();
+      clientController.guiIsClosing();
     });
     stage.setTitle("Mail Client");
     stage.setScene(scene);

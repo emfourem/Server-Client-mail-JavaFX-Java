@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -68,17 +67,33 @@ public class ClientGuiController {
   NewEmailGuiController childController;
 
   @FXML
-  public void initialize(ClientController controller){
+  public void initialize(ClientController controller) {
     this.clientController = controller;
     this.mailbox = controller.getMailbox();
     selectedEmail = null;
     accountLabel.setText(this.mailbox.getEmailAddress());
     emailTextArea.setEditable(false);
+    receivedEmailsListView.setCellFactory(cell -> new ListCell<>() {
+      @Override
+      protected void updateItem(Email email, boolean empty) {
+        super.updateItem(email, empty);
+        if (!empty && email != null) {
+          setText(email.toString());
+          if (email.getStato().equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString()) || email.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
+            setStyle("-fx-font-weight: bold");
+          } else {
+            setStyle(null);
+          }
+        } else {
+          setText(null);
+        }
+      }
+    });
     receivedEmailsListView.setOnMouseClicked(this::showSelectedEmail);
     receivedEmailsListView.itemsProperty().bind(mailbox.inboxProperty());
     emptyEmail = new Email(-1, "", Arrays.asList(""), "", "", new Date());
     // disabilito i bottoni
-    disableAllEmailBtns(true);
+    disableAllEmailButtons(true);
     //
     updateDetailView(emptyEmail);
     //
@@ -88,7 +103,7 @@ public class ClientGuiController {
   protected void showSelectedEmail(MouseEvent mouseEvent) {
     Email email = receivedEmailsListView.getSelectionModel().getSelectedItem();
 
-    if (email.getStato().equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString())) {
+    if (email != null && (email.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString()) || email.getStato().equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString()))) {
       email.setStato(EmailStateEnum.MAIL_SEEN.toString());
       Email seenMail = new Email(this.mailbox.getEmailAddress());
       seenMail.setId(email.getId());
@@ -98,7 +113,7 @@ public class ClientGuiController {
     selectedEmail = email;
     updateDetailView(email);
     if (email != null) {
-      disableAllEmailBtns(false);
+      disableAllEmailButtons(false);
     }
   }
 
@@ -109,7 +124,7 @@ public class ClientGuiController {
       emailObjectDataLabel.setText(email.getObject());
       if (email.getId() == -1) {
         dateDataLabel.setText("");
-        disableAllEmailBtns(true);
+        disableAllEmailButtons(true);
       } else {
         dateDataLabel.setText(email.getDate());
       }
@@ -119,16 +134,15 @@ public class ClientGuiController {
 
   @FXML
   public void onWriteEmail() throws IOException {
-    System.out.println("onWriteEmail");
     launchNewEmailGui(EmailStateEnum.NEW_EMAIL, selectedEmail);
-    System.out.println("onWriteEmailDone");
+    System.out.println("onWriteEmail");
   }
 
   @FXML
   public void onDeleteAllEmails() {
     System.out.println("Elimino la casella");
+    disableAllEmailButtons(true);
     for (Email email : this.mailbox.inboxProperty().get()) {
-      System.out.println("Elimino: " + email);
       clientController.deleteEmail(email);
     }
     mailbox.emptyInbox();
@@ -146,7 +160,7 @@ public class ClientGuiController {
     mailbox.deleteEmail(selectedEmail);
     clientController.deleteEmail(selectedEmail);
     updateDetailView(emptyEmail);
-    disableControls(false);
+    disableAllEmailButtons(true);
   }
 
   @FXML
@@ -161,7 +175,7 @@ public class ClientGuiController {
     launchNewEmailGui(EmailStateEnum.REPLY_EMAIL, selectedEmail);
   }
 
-  protected void disableAllEmailBtns(boolean flag) {
+  protected void disableAllEmailButtons(boolean flag) {
     replyBtn.setDisable(flag);
     forwardBtn.setDisable(flag);
     deleteBtn.setDisable(flag);
@@ -184,13 +198,11 @@ public class ClientGuiController {
   }
 
   public void alertNewMessage(String s) {
-    // if (alertNewMessage != null) {
-      alertNewMessage = new Alert(Alert.AlertType.INFORMATION);
-      alertNewMessage.setHeaderText("New Message Received!");
-      alertNewMessage.setContentText("New message received from " + s);
-      alertNewMessage.setTitle("New Message Notification");
-      alertNewMessage.show();
-    // }
+    alertNewMessage = new Alert(Alert.AlertType.INFORMATION);
+    alertNewMessage.setHeaderText("New Message Received!");
+    alertNewMessage.setContentText("New message received from " + s);
+    alertNewMessage.setTitle("New Message Notification");
+    alertNewMessage.show();
   }
 
   protected void launchNewEmailGui(EmailStateEnum c, Email e) throws IOException {
@@ -202,17 +214,21 @@ public class ClientGuiController {
     childController = fxmlLoader.getController();
     childController.initialize(mailbox, c, e, clientController);
     stage1.setOnCloseRequest(event -> {
-      disableControls(false);
+      System.out.println("Children close");
+      disableAllEmailButtons(true);
+      writeEmailBtn.setDisable(false);
     });
     stage1.setOnHiding(event -> {
-      disableControls(false);
+      System.out.println("Children hide");
+      disableAllEmailButtons(false);
+      writeEmailBtn.setDisable(false);
     });
     writeEmailBtn.setDisable(true);
     stage1.show();
   }
 
   public void disableControls(boolean flag) {
-    disableAllEmailBtns(flag);
+    disableAllEmailButtons(flag);
     writeEmailBtn.setDisable(flag);
     deleteAllBtn.setDisable(flag);
     if (childController != null) {
@@ -220,29 +236,14 @@ public class ClientGuiController {
     }
   }
 
+  public void disableDashboardCta(boolean flag) {
+    writeEmailBtn.setDisable(flag);
+    deleteAllBtn.setDisable(flag);
+  }
+
   public void closeAllChildren() {
     if (this.stage1 != null && stage1.isShowing()) {
       stage1.close();
     }
   }
-
-  public void updateEmailBold() {
-    receivedEmailsListView.setCellFactory(cell -> new ListCell<>(){
-      @Override
-      protected void updateItem(Email email, boolean empty) {
-        super.updateItem(email, empty);
-        if (!empty && email != null) {
-          setText(email.toString());
-          if (email.getStato().equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString()) || email.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
-            setStyle("-fx-font-weight: bold");
-          } else {
-            setStyle("-fx-font-weight: normal");
-          }
-        } else {
-          setText(null);
-        }
-      }
-    });
-  }
-
 }

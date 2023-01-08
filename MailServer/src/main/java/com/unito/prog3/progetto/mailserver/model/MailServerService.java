@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 public class MailServerService extends Thread{
   private int port;
-  private Client c;
   private ServerGuiController guiController;
   ExecutorService executorService;
   ServerSocket serverSocket;
@@ -22,14 +21,12 @@ public class MailServerService extends Thread{
 
   public MailServerService(int port, ServerGuiController guiController) {
     this.port = port;
-    this.c = c;
     this.guiController = guiController;
     serverSocket = null;
     // hook
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       System.out.println("Shutdown server...");
-
-      // eseguira la close delle socket
+      // eseguirà la close delle socket
       try {
         serverSocket.close();
       } catch (IOException e) {
@@ -38,25 +35,9 @@ public class MailServerService extends Thread{
     }));
   }
 
-  public int getPort() {
-    return port;
-  }
-
-  public void setPort(int port) {
-    this.port = port;
-  }
-
-  public Client getC() {
-    return c;
-  }
-
-  public void setC(Client c) {
-    this.c = c;
-  }
-
   @Override
   public void run() {
-    System.out.println("Server locahols in port " + this.port + "... \n");
+    System.out.println("Server ready. Port: " + this.port + "\n");
     this.service();
   }
 
@@ -66,12 +47,12 @@ public class MailServerService extends Thread{
       executorService= Executors.newFixedThreadPool(CORE_MACHINES);
       while (isServiceOn) {
         Socket client = serverSocket.accept();
-        System.out.println("accettato: " + client);
+        System.out.println("Accepted: " + client);
         Runnable task = new MailServerClientWorker(client, guiController);
         executorService.execute(task);
       }
     } catch (SocketException socketException) {
-      System.out.println("GUI del server e' chiusa, chiudo anche la server socket");
+      System.out.println("Server GUI close, now I close the server socket");
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -80,7 +61,6 @@ public class MailServerService extends Thread{
   public void shutdownMailServerService() {
     if (executorService != null) {
       try {
-        // attendo 15 secondi, se il thread del client non termina, allora forzo la terminazione
         if (!executorService.awaitTermination(500, TimeUnit.MILLISECONDS)) {
           executorService.shutdownNow(); // Cancel currently executing tasks
           if (!executorService.awaitTermination(500, TimeUnit.MILLISECONDS))
@@ -93,7 +73,6 @@ public class MailServerService extends Thread{
   }
 
   public void guiIsClosing() {
-    System.out.println("Chiudo la gui del SERVER...");
     this.isServiceOn = false;
     try {
       this.serverSocket.close();

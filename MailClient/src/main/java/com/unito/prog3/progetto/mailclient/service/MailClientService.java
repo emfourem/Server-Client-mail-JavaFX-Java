@@ -4,6 +4,7 @@ import com.unito.prog3.progetto.mailclient.controller.ClientController;
 import com.unito.prog3.progetto.model.Constants;
 import com.unito.prog3.progetto.model.Email;
 import com.unito.prog3.progetto.model.Message;
+import com.unito.prog3.progetto.model.ServiceHeaders;
 import javafx.application.Platform;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class MailClientService {
   private ClientController mailClientController;
   private Socket socket;
   private boolean isServiceOn = true;
+  private boolean retrieveInboxFirsTry = false;
 
   public MailClientService(ClientController mailClientController) {
     this.mailClientController = mailClientController;
@@ -29,49 +31,17 @@ public class MailClientService {
     }));
   }
 
-  public void toggleServce() {
+  public void toggleService() {
     this.isServiceOn = false;
   }
 
   public void sendMessage(Message message) {
     // avvio un thread
-    new Thread(() -> {
-      try {
-        socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
-        // qua la socket e' aperta
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        objectOutputStream.writeObject(message);
-        objectOutputStream.flush();
-      } catch (ConnectException connectException) {
-        System.out.println("Server giu'");
-        disabilitaGuiCta(true);
-        Platform.runLater(() -> {
-          // dico alla gui di mostrare un messaggio di errore, ovvero server DOWN
-        });
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }).start();
+    launchNewThread(message);
   }
 
   public void deleteMessage(Message message) {
-    new Thread(() -> {
-      try {
-        socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
-        // qua la socket e' aperta
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        objectOutputStream.writeObject(message);
-        objectOutputStream.flush();
-      } catch (ConnectException connectException) {
-        System.out.println("Server giu'");
-        disabilitaGuiCta(true);
-        Platform.runLater(() -> {
-          // dico alla gui di mostrare un messaggio di errore, ovvero server DOWN
-        });
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }).start();
+    launchNewThread(message);
   }
 
   public void openConnection(Message message) {
@@ -86,16 +56,9 @@ public class MailClientService {
         objectOutputStream.writeObject(message);
         objectOutputStream.flush();
         // dopo aver notificato...
-        ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-        ArrayList<Email> emails = (ArrayList<Email>) objectInputStream.readObject();
-        for (Email e : emails) {
-          System.out.println(e);
-          Platform.runLater(() -> {
-            mailClientController.pushMail(e);
-          });
-        }
+        readAndWriteAllEmails();
+        retrieveInboxFirsTry = true;
       } catch (ConnectException connectException) {
-        System.out.println("Server giu'");
         disabilitaGuiCta(true);
         Platform.runLater(() -> {
           // dico alla gui di mostrare un messaggio di errore, ovvero server DOWN
@@ -108,65 +71,51 @@ public class MailClientService {
     }).start();
   }
 
-  public void notifyClientDisconnect(Message message) {
-    this.toggleServce();
-    new Thread(() -> {
-      try {
-        socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        // invio la notifica
-        objectOutputStream.writeObject(message);
-        objectOutputStream.flush();
-        // invio la mailbox per sincronizzarla con il server
-        // objectOutputStream.writeObject(emails);
-        // objectOutputStream.flush();
-      } catch (ConnectException connectException) {
-        System.out.println("Server giu'");
-        disabilitaGuiCta(true);
-        Platform.runLater(() -> {
-          // dico alla gui di mostrare un messaggio di errore, ovvero server DOWN
-        });
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }).start();
+  private void readAndWriteAllEmails() throws IOException, ClassNotFoundException {
+    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+    ArrayList<Email> emails = (ArrayList<Email>) objectInputStream.readObject();
+    for (Email e : emails) {
+      Platform.runLater(() -> {
+        mailClientController.pushIfNotPresent(e);
+      });
+    }
   }
 
-  public void periodicalEmailsRetreive(Message message) {
+  public void notifyClientDisconnect(Message message) {
+    this.toggleService();
+    launchNewThread(message);
+  }
+
+  public void periodicalEmailsRetrieve(Message message) {
     new Thread(() -> {
       while (this.isServiceOn) {
-        //
         try {
           Thread.sleep(1500);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
         //
-        try {
-          socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
-          disabilitaGuiCta(false);
-          ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-          // invio la notifica
-          objectOutputStream.writeObject(message);
-          objectOutputStream.flush();
-          // dopo aver notificato il server...
-          ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-          ArrayList<Email> emails = (ArrayList<Email>) objectInputStream.readObject();
-          for (Email e : emails) {
-            System.out.println(e);
-            Platform.runLater(() -> {
-              mailClientController.pushIfNotPresent(e);
-            });
-            // mailClientController.pushIfNotPresent(e);
+        if(!retrieveInboxFirsTry) {
+          Message messageAssist = new Message();
+          messageAssist.setHeader(ServiceHeaders.CONNECTION_REQUEST.toString());
+          messageAssist.setEmail(new Email(message.getEmail().getSender()));
+          openConnection(messageAssist);
+        }
+        else {
+          try {
+            socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
+            disabilitaGuiCta(false);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            // invio la notifica
+            objectOutputStream.writeObject(message);
+            objectOutputStream.flush();
+            // dopo aver notificato il server...
+            readAndWriteAllEmails();
+          } catch (ConnectException connectException) {
+            disabilitaGuiCta(true);
+          } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
           }
-        } catch (ConnectException connectException) {
-          System.out.println("Server giu'");
-          disabilitaGuiCta(true);
-          Platform.runLater(() -> {
-            // dico alla gui di mostrare un messaggio di errore, ovvero server DOWN
-          });
-        } catch (IOException | ClassNotFoundException e) {
-          e.printStackTrace();
         }
       }
     }).start();
@@ -182,6 +131,10 @@ public class MailClientService {
   }
 
   public void seenMail(Message message) {
+    launchNewThread(message);
+  }
+
+  private void launchNewThread(Message message) {
     new Thread(() -> {
       try {
         socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
@@ -190,7 +143,6 @@ public class MailClientService {
         objectOutputStream.writeObject(message);
         objectOutputStream.flush();
       } catch (ConnectException connectException) {
-        System.out.println("Server giu'");
         disabilitaGuiCta(true);
         Platform.runLater(() -> {
           // dico alla gui di mostrare un messaggio di errore, ovvero server DOWN
@@ -200,39 +152,4 @@ public class MailClientService {
       }
     }).start();
   }
-
-  /*
-  protected class MailInWorker extends Thread {
-    @Override
-    public synchronized void run() {
-      System.out.println("Sono il listener della posta in entrata..." + currentThread().getName());
-      try {
-        ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-        ArrayList<Email> emailArrayList = (ArrayList<Email>) objectInputStream.readObject();
-        for (Email email : emailArrayList) {
-          mailClientController.pushMail(email);
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  protected class MailOutWorker extends Thread {
-
-    @Override
-    public synchronized void run() {
-      System.out.println("Sono il listener della posta in uscita..." + currentThread().getName());
-      try {
-        ObjectOutputStream objectInputStream = new ObjectOutputStream(socket.getOutputStream());
-        Email noEmail = new Email(-1, "boris.turcan@gmail.com", null, "", "", new Date());
-        objectInputStream.writeObject(noEmail);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-  */
 }

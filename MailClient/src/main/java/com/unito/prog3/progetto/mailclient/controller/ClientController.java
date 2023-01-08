@@ -31,7 +31,6 @@ public class ClientController {
   public void shutdownMailClientService() {
     if (executorService != null) {
       try {
-        // attendo 15 secondi, se il thread del client non termina, allora forzo la terminazione
         if (!executorService.awaitTermination(500, TimeUnit.MILLISECONDS)) {
           executorService.shutdownNow(); // Cancel currently executing tasks
           if (!executorService.awaitTermination(500, TimeUnit.MILLISECONDS))
@@ -46,36 +45,23 @@ public class ClientController {
   public ClientMailbox getMailbox() {
     return mailbox;
   }
-
-  public synchronized void pushMail(Email email) {
+  private void checkContains(Email email) {
     if (mailbox.contains(email)) {
       if (email.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
-        email.setStato(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
-        Email seenMail = new Email(this.mailbox.getEmailAddress());
-        seenMail.setId(email.getId());
-        seenMail(seenMail, EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
         Platform.runLater(() -> {
           this.guiController.alertNewMessage(email.getSender());
         });
+        email.setStato(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
+        // notifico il server
+        Email seen = new Email(this.mailbox.getEmailAddress());
+        seen.setId(email.getId());
+        seenMail(seen, EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
       }
     }
-    this.guiController.updateEmailBold();
-    this.mailbox.addEmail(email);
   }
 
   public synchronized void pushIfNotPresent(Email email) {
-    if (mailbox.contains(email)) {
-      if (email.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
-        email.setStato(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
-        Email seenMail = new Email(this.mailbox.getEmailAddress());
-        seenMail.setId(email.getId());
-        seenMail(seenMail, EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
-        Platform.runLater(() -> {
-          this.guiController.alertNewMessage(email.getSender());
-        });
-      }
-    }
-    this.guiController.updateEmailBold();
+    checkContains(email);
     this.mailbox.addEmailIfNotPresent(email);
   }
 
@@ -85,7 +71,6 @@ public class ClientController {
     Message message = new Message();
     message.setEmail(new Email(mailbox.getEmailAddress()));
     message.setHeader(ServiceHeaders.CONNECTION_CLOSED.toString());
-    // ArrayList<Email> emails = new ArrayList<>(mailbox.inboxProperty().getValue().stream().toList());
     this.service.notifyClientDisconnect(message);
   }
 
@@ -119,14 +104,16 @@ public class ClientController {
     Message message = new Message();
     message.setHeader(ServiceHeaders.REQUEST_NEW_EMAILS.toString());
     message.setEmail(new Email(mailbox.getEmailAddress()));
-    service.periodicalEmailsRetreive(message);
+    service.periodicalEmailsRetrieve(message);
   }
 
   public void notifyServerDown(boolean flag) {
-    if (flag ) {
+    if (flag) {
+      this.guiController.disableControls(true);
       this.guiController.alertInformation();
+    } else {
+      this.guiController.disableDashboardCta(false);
     }
-    this.guiController.disableControls(flag);
   }
 
   public void resetAlert() {

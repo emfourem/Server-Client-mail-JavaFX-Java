@@ -12,18 +12,14 @@ import java.io.*;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-//socket associata al singolo client
 public class MailServerClientWorker extends Thread {
   private Socket socket;
   private ServerGuiController guiController;
   private String emailSender;
   private ArrayList<Email> inbox;
-  private long lastAccess = new Date().getTime();
-
   public MailServerClientWorker(Socket socket, ServerGuiController guiController) {
     this.socket = socket;
     this.guiController = guiController;
@@ -33,28 +29,19 @@ public class MailServerClientWorker extends Thread {
 
   @Override
   public void run() {
-    //mandare messaggi al client
     try {
       ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
       Message message = (Message) objectInputStream.readObject();
       String header = message.getHeader();
-
       if (header.equalsIgnoreCase(ServiceHeaders.CONNECTION_REQUEST.toString())) {
-        System.out.println("Richiesta di collegamento");
         this.emailSender = message.getEmail().getSender();
         MyFileWriterService.createMailbox(message.getEmail());
-        retrieveThenSendEmails(message.getEmail());
-        // aggiorno la gui
+        retrieveThenSendEmails(message.getEmail(), false);
         Platform.runLater(() -> {
           this.guiController.logNewConnection(socket.toString());
           this.guiController.logNewClient(this.emailSender);
         });
-
       } else if (header.equalsIgnoreCase(ServiceHeaders.CONNECTION_CLOSED.toString())) {
-        // Email e = message.getEmail();
-        // ArrayList<Email> emails = (ArrayList<Email>) objectInputStream.readObject();
-        // MyFileWriterService.updateMailboxOf(e, emails);
-        // aggiorno la gui
         Platform.runLater(() -> {
           this.guiController.logLostConnection(socket.toString() + "\n");
           this.guiController.logLostClient(message.getEmail().getSender() + "\n");
@@ -63,11 +50,9 @@ public class MailServerClientWorker extends Thread {
         receiveMailThenStore(message.getEmail());
       } else if (header.equalsIgnoreCase(ServiceHeaders.DELETE_EMAIL_BY_ID.toString())) {
         MyFileWriterService.deleteEmail(message.getEmail());
-        // retrieveThenSendEmails(message.getEmail());
       } else if (header.equalsIgnoreCase(ServiceHeaders.REQUEST_NEW_EMAILS.toString())) {
         this.emailSender = message.getEmail().getSender();
-        retrieveThenSendEmails(message.getEmail());
-        // aggiorno la gui
+        retrieveThenSendEmails(message.getEmail(), true);
         Platform.runLater(() -> {
           this.guiController.logNewClient(this.emailSender);
         });
@@ -77,32 +62,30 @@ public class MailServerClientWorker extends Thread {
       } else if (header.equalsIgnoreCase(EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString())) {
         MyFileWriterService.markAs(message.getEmail(), EmailStateEnum.MAIL_RECEIVED_NOT_SEEN.toString());
       }
-
-
     } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
-    System.out.println("Task completata, finisco di lavorare...");
   }
 
   private void receiveMailThenStore(Email email) throws IOException, ClassNotFoundException {
-    System.out.println("Messaggio ricevuto: ");
-    System.out.println(email.getSender());
-    System.out.println(email.getObject());
-    System.out.println(email.getText());
-    String dests = "";
+    String dest = "";
     for (String s : email.getReceivers()) {
-      System.out.println("Dest: " + s);
-      dests += " [ " + s + "] ";
+      dest += " [ " + s + "] ";
     }
-    String finalDests = dests;
+    String finalDest = dest;
     Platform.runLater(() -> {
-      this.guiController.logMessageSend("New message from [ " + email.getSender() + " ] to " + finalDests + "\n");
-      this.guiController.logMessageSend("New message to [ " + finalDests + " ] from " + emailSender + "\n");
+      this.guiController.logMessageSend("New message from [" + email.getSender() + "] to " + finalDest + "\n");
     });
     ArrayList<String> notFound = MyFileWriterService.writeEmail(email);
     if (notFound.size() > 0) {
       writeNoReply(email.getSender(), notFound);
+    }
+    for (String s : email.getReceivers()) {
+      if(!notFound.contains(s)) {
+        Platform.runLater(() -> {
+          this.guiController.logMessageSend("New message to [" + s + "] from [" + email.getSender() + "]\n");
+        });
+      }
     }
   }
 
@@ -115,7 +98,7 @@ public class MailServerClientWorker extends Thread {
     for (String s : notFound) {
       stringBuilder.append("\t").append(s).append("\n");
       Platform.runLater(() -> {
-        this.guiController.logMessageSend("Message from " + dest + " to " + s + " failed [ user not found ]\n");
+        this.guiController.logMessageSend("Message from [" + dest + "] to [" + s + "] FAILED [ user not found ]\n");
       });
     }
     stringBuilder.append("Cordially, \nTeam MMT\n");
@@ -126,79 +109,24 @@ public class MailServerClientWorker extends Thread {
     MyFileWriterService.writeEmail(noReply);
   }
 
-  private void retrieveThenSendEmails(Email email) throws IOException, ClassNotFoundException {
-    inbox = MyFileWriterService.retreiveMails(email);
+  private void retrieveThenSendEmails(Email email, boolean needFilter) throws IOException, ClassNotFoundException {
+    ArrayList<Email> allEmails = MyFileWriterService.retrieveMails(email);
+    // filtro i messaggi
+    if (needFilter) {
+      for (Email e : allEmails) {
+        if (e.getStato().equalsIgnoreCase(EmailStateEnum.NEW_EMAIL.toString())) {
+          inbox.add(e);
+        }
+      }
+    } else {
+      inbox = allEmails;
+    }
     sendEmails();
   }
 
-  private void sendEmails() throws IOException, ClassNotFoundException {
+  private void sendEmails() throws IOException {
     ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
     objectOutputStream.writeObject(inbox);
     objectOutputStream.flush();
-    System.out.println("Inivato la inbox");
   }
-
-  /*
-  public void retreiveEmails() throws IOException, ClassNotFoundException {
-
-    // System.out.println( databaseDirectory.getAbsolutePath() + " " + databaseDirectory.isDirectory());
-    File[] files = databaseDirectory.listFiles();
-    for (File f : files) {
-      if (f.getName().equalsIgnoreCase(this.emailSender.concat(".dat"))) {
-        System.out.println(new SimpleDateFormat("dd/MM/yyyy:HH:mm:ss.S").format(new Date(f.lastModified())));
-        System.out.println("mailbox trovata!");
-        // recupero le mie email
-        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("database/".concat(this.emailSender.concat(".dat"))));
-        inbox = (ArrayList<Email>) objectInputStream.readObject();
-        return;
-      }
-    }
-    // ciclo fallito, quindi creo la mia mailbox
-    File mailbox = new File("database/".concat(this.emailSender.concat(".dat")));
-    if (mailbox.createNewFile()) {
-      System.out.println("Ho creato la mailbox di " + mailbox.getName());
-      // dummyMails
-      // popolo la inbox
-    }
-    dummyEmails();
-    ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(mailbox));
-    outputStream.writeObject(inbox);
-    outputStream.flush();
-    outputStream.close();
-  }
-  */
-
-  public void dummyEmails() {
-    Email e1 = new Email(1, "mario.rossi@gmail.com", Arrays.asList("luca.verdi@uni.it", "marco.marroni@unito.it", "marco.pironti.botta@unito.it"), "Oggetto della mia mail", "Testo del messaggio", new Date());
-    Email e2 = new Email(2, "alberto.marino@gmail.com", Arrays.asList("luca.verdi@uni.it", "marco.pironti.botta@unito.it"), "Oggetto della mia mail", "Testo del messaggio", new Date());
-    Email e3 = new Email(3, "antonio.pesce@gmail.com", List.of("marco.pironti.botta@unito.it"), "Oggetto della mia mail", "Testo del messaggio", new Date());
-    inbox.add(e1);
-    inbox.add(e2);
-    inbox.add(e3);
-  }
-
-  /*
-  protected class SubworkerIn extends Thread {
-    @Override
-    public synchronized void run() {
-      // QUESTA CLASSE fara da destinatario verso il client
-
-    }
-  }
-
-  protected class SubworkerOut extends Thread {
-    @Override
-    public synchronized void run() {
-      // QUESTA CLASSE fara da mittente verso il client
-      try {
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        retreiveEmails();
-        objectOutputStream.writeObject(inbox);
-        objectOutputStream.flush();
-      } catch (IOException | ClassNotFoundException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-   */
 }

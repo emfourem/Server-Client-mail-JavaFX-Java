@@ -42,8 +42,6 @@ public class NewEmailGuiController {
     this.controller = controller;
     fromEmailTextField.setText(mailClient.getEmailAddress());
     switch (flag) {
-      case NEW_EMAIL -> {
-      }
       case REPLY_EMAIL -> {
         sendToTextField.setText(currentEmail.getSender());
         currentEmail.setStato(EmailStateEnum.REPLY_EMAIL.toString());
@@ -57,7 +55,7 @@ public class NewEmailGuiController {
       }
       case REPLY_ALL_EMAIL -> {
         currentEmail.setStato(EmailStateEnum.REPLY_ALL_EMAIL.toString());
-        String rs = String.join(", ", currentEmail.getReceivers()).replace(c.getEmailAddress(), currentEmail.getSender());
+        String rs = String.join(",", currentEmail.getReceivers()).replace(c.getEmailAddress(), currentEmail.getSender());
         System.out.println(rs);
         sendToTextField.setText(rs);
         objectEmailTextField.setText("RE: " + currentEmail.getObject());
@@ -78,10 +76,8 @@ public class NewEmailGuiController {
   @FXML
   public void onSendEmail() {
     System.out.println("send email");
-    System.out.println("DICO AL CLIENT DI INVIARE EMAIL");
     String regex="^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}";
     Pattern pattern=Pattern.compile(regex);
-    //gestire caso dei molteplici receivers
     String[] matcherReceivers = sendToTextField.getText().split(",");
     String wrongEmailAddresses = "";
     boolean flag = true;

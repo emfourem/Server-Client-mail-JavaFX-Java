@@ -29,10 +29,6 @@ public class ClientMailbox {
     return emailAddress.get();
   }
 
-  public SimpleStringProperty emailAddressProperty() {
-    return emailAddress;
-  }
-
   public SimpleListProperty<Email> inboxProperty() {
     return inbox;
   }
