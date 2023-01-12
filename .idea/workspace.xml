@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e2fc05ef-b898-4cb0-b169-bd6d8d752321" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/MailClient/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/.idea/libraries/Maven__org_openjfx_javafx_base_mac_aarch64_17_0_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/.idea/libraries/Maven__org_openjfx_javafx_base_linux_17_0_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/.idea/libraries/Maven__org_openjfx_javafx_controls_mac_aarch64_17_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/.idea/libraries/Maven__org_openjfx_javafx_fxml_mac_aarch64_17_0_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/.idea/libraries/Maven__org_openjfx_javafx_fxml_linux_17_0_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/.idea/libraries/Maven__org_openjfx_javafx_graphics_mac_aarch64_17_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/MailClient.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/MailClient.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/ClientApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/ClientApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/controller/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/controller/ClientController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/controller/ClientGuiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/controller/ClientGuiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/controller/NewEmailGuiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/controller/NewEmailGuiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/model/ClientMailbox.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/model/ClientMailbox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/model/MailClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/model/MailClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/service/MailClientService.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/mailclient/service/MailClientService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/model/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/model/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/model/Email.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/model/Email.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/model/EmailStateEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/model/EmailStateEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/model/ServiceHeaders.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/src/main/java/com/unito/prog3/progetto/model/ServiceHeaders.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/ClientApplication$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/ClientApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/controller/ClientController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/controller/ClientGuiController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/controller/NewEmailGuiController$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/controller/NewEmailGuiController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/model/ClientMailbox.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/model/MailClient.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/mailclient/service/MailClientService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/model/Constants.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/model/Email.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/model/EmailStateEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/model/Message.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/com/unito/prog3/progetto/model/ServiceHeaders.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailClient/target/classes/module-info.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/.idea/libraries/Maven__org_openjfx_javafx_base_mac_aarch64_17_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/.idea/libraries/Maven__org_openjfx_javafx_controls_mac_aarch64_17_0_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/.idea/libraries/Maven__org_openjfx_javafx_controls_linux_17_0_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/.idea/libraries/Maven__org_openjfx_javafx_fxml_mac_aarch64_17_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/.idea/libraries/Maven__org_openjfx_javafx_graphics_mac_aarch64_17_0_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MailClient/.idea/libraries/Maven__org_openjfx_javafx_graphics_linux_17_0_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/MailServer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/MailServer.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/database/boris.turcan@gmail.com.dat" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/database/boris.turcan@gmail.com.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/mailserver/model/MailServerClientWorker.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/mailserver/model/MailServerClientWorker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/mailserver/model/MailServerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/mailserver/model/MailServerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/mailserver/service/MyFileWriterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/mailserver/service/MyFileWriterService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/model/Email.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/model/Email.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/model/EmailStateEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/model/EmailStateEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/model/ServiceHeaders.java" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/src/main/java/com/unito/prog3/progetto/model/ServiceHeaders.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/mailserver/model/MailServerClientWorker.class" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/mailserver/model/MailServerClientWorker.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/mailserver/model/MailServerService.class" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/mailserver/model/MailServerService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/mailserver/service/MyFileWriterService.class" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/mailserver/service/MyFileWriterService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/model/Email.class" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/model/Email.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/model/EmailStateEnum.class" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/model/EmailStateEnum.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/model/ServiceHeaders.class" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/target/classes/com/unito/prog3/progetto/model/ServiceHeaders.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MailServer/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/MailServer/target/classes/module-info.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2JVC1C72ntPsNfbpfc66g0MC8ur" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/michele/Documenti/Prog3/prog3&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e2fc05ef-b898-4cb0-b169-bd6d8d752321" name="Changes" comment="" />
+      <created>1672153646036</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1672153646036</updated>
+      <workItem from="1672153647651" duration="117000" />
+      <workItem from="1672313938203" duration="139000" />
+      <workItem from="1672429440714" duration="37000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
