@@ -7,127 +7,119 @@ import java.util.List;
 
 /**
  * @author Merico Michele, Montesi Dennis, Turcan Boris
- * Represents a email
+ * Represents an email
  */
-
-// TODO: (1) Delete + Delete All
-// TODO: fare il controllo sulla forma dei messaggi
-
-
 public class Email implements Serializable {
-  private static final long serialVersionUID = 1L;
-  private long id;
-  private String sender;
-  private List<String> receivers;
-  private String object;
-  private String text;
-  private String date;
-  private String stato;
+    private static final long serialVersionUID=1L;
+    private long id;
+    private String sender;
+    private List<String> receivers;
+    private String object;
+    private String text;
+    private String date;
+    private String state;
 
-  /**
-   *
-   * @param id the id of the email
-   * @param sender the sender email
-   * @param receivers the list of receivers email
-   * @param object the object of the email
-   * @param text the text of the email
-   * @param date the forwarding date of the email
-   */
+    /**
+     * @param id: the email id
+     * @param sender: the email sender
+     * @param receivers: the email receivers list
+     * @param object: the email object
+     * @param text: the email text
+     * @param date: the email sending date
+     */
+    public Email(long id, String sender, List<String> receivers, String object, String text, Date date) {
+        this.id = id;
+        this.sender = sender;
+        this.receivers = receivers;
+        this.object = object;
+        this.text = text;
+        this.date = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(date);
+        this.state = "not_seen";
+    }
 
-  public Email() {
+    public Email(String sender) {
+        this.id = -1;
+        this.sender = sender;
+        this.receivers = null;
+        this.object = "";
+        this.text = "";
+        this.date = null;
+        this.state = "no_email";
+    }
 
-  }
+    public String getState() {
+        return state;
+    }
 
-  public Email(long id, String sender, List<String> receivers, String object, String text, Date date) {
-    this.id = id;
-    this.sender = sender;
-    this.receivers = receivers;
-    this.object = object;
-    this.text = text;
-    this.date = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(date); // >> Gmail
-    this.stato = "not_seen";
-  }
+    public long getId() {
+        return id;
+    }
 
-  public Email(String sender) {
-    this.id = -1;
-    this.sender = sender;
-    this.receivers = null;
-    this.object = "";
-    this.text = "";
-    this.date = null;
-    this.stato = "no_email";
-  }
+    public String getSender() {
+        return sender;
+    }
 
-  public String getStato() {
-    return stato;
-  }
+    public List<String> getReceivers() {
+        return receivers;
+    }
 
-  public void setStato(String stato) {
-    this.stato = stato;
-  }
+    public String getObject() {
+        return object;
+    }
 
-  public long getId() {
-    return id;
-  }
+    public String getText() {
+        return text;
+    }
 
-  public String getSender() {
-    return sender;
-  }
+    public String getDate() {
+        return date;
+    }
 
-  public List<String> getReceivers() {
-    return receivers;
-  }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-  public String getObject() {
-    return object;
-  }
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
 
-  public String getText() {
-    return text;
-  }
+    public void setReceivers(List<String> receivers) {
+        this.receivers = receivers;
+    }
 
-  public String getDate() {
-    return date;
-  }
+    public void setObject(String object) {
+        this.object = object;
+    }
 
-  public void setId(long id) {
-    this.id = id;
-  }
+    public void setText(String text) {
+        this.text = text;
+    }
 
-  public void setSender(String sender) {
-    this.sender = sender;
-  }
+    public void setDate(String date) {
+        this.date = date;
+    }
 
-  public void setReceivers(List<String> receivers) {
-    this.receivers = receivers;
-  }
+    public void setState(String state) {
+        this.state = state;
+    }
 
-  public void setObject(String object) {
-    this.object = object;
-  }
+    /**
+     * @param o: the email to compare
+     * @return true if the two emails have the same ID, false otherwise
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Email nE = (Email) o;
+        return this.getId() == nE.getId();
+    }
 
-  public void setText(String text) {
-    this.text = text;
-  }
-
-  public void setDate(String date) {
-    this.date = date;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Email nE = (Email) o;
-    return this.getId() == nE.getId();
-  }
-
-  /**
-   *
-   * @return a string of the sender email and the list of receivers email
-   */
-  @Override
-  public String toString() {
-    return String.join(" - ", List.of(this.sender,this.object));
-  }
+    /**
+     * @return a string of the sender email and the list of receivers email
+     */
+    @Override
+    public String toString() {
+        return String.join(" - ", List.of(this.sender,this.object));
+    }
 }

@@ -1,7 +1,7 @@
 package com.unito.prog3.progetto.mailclient.controller;
 
 import com.unito.prog3.progetto.mailclient.model.ClientMailbox;
-import com.unito.prog3.progetto.model.EmailStateEnum;
+import com.unito.prog3.progetto.model.Constants;
 import com.unito.prog3.progetto.model.Email;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -9,113 +9,138 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.regex.*;
 
-// controller della gui CLIENT
+/**
+ * @author Merico Michele, Montesi Dennis, Turcan Boris
+ * Represents new email GUI controller
+ */
 public class NewEmailGuiController {
+
+  /**
+   * Text fields
+   */
   @FXML
   private TextField sendToTextField;
   @FXML
   private TextField fromEmailTextField;
   @FXML
   private TextField objectEmailTextField;
-  // text area
+
+  /**
+   * Text area
+   */
   @FXML
   private TextArea emailBodyTextArea;
-  // buttons
+
+  /**
+   * Buttons
+   */
   @FXML
-  private Button cancelEmailBtn;
+  private Button clearTextBtn;
   @FXML
   private Button sendEmailBtn;
 
+  /**
+   * Model and controller
+   */
   private ClientMailbox mailClient;
   private ClientController controller;
+  private String flag;
+  private ClientGuiController mainGuiController;
 
+  /**
+   * @param c: model
+   * @param flag: operation chosen by user
+   * @param currentEmail: email selected by user
+   * @param controller: controller of project model
+   */
   @FXML
-  public void initialize(ClientMailbox c, EmailStateEnum flag, Email currentEmail, ClientController controller) {
+  public void initialize(ClientMailbox c, String flag, Email currentEmail, ClientController controller, ClientGuiController  mainGuiController) {
     this.mailClient = c;
     this.controller = controller;
+    this.mainGuiController=mainGuiController;
+    this.flag=flag;
     fromEmailTextField.setText(mailClient.getEmailAddress());
-    switch (flag) {
-      case REPLY_EMAIL -> {
-        sendToTextField.setText(currentEmail.getSender());
-        currentEmail.setStato(EmailStateEnum.REPLY_EMAIL.toString());
-        objectEmailTextField.setText("RE: " + currentEmail.getObject());
-        objectEmailTextField.setEditable(false);
-      }
-      case FORWARD_EMAIL -> {
-        objectEmailTextField.setText(currentEmail.getObject());
-        currentEmail.setStato(EmailStateEnum.FORWARD_EMAIL.toString());
-        emailBodyTextArea.setText(currentEmail.getText());
-      }
-      case REPLY_ALL_EMAIL -> {
-        currentEmail.setStato(EmailStateEnum.REPLY_ALL_EMAIL.toString());
-        String rs = String.join(",", currentEmail.getReceivers()).replace(c.getEmailAddress(), currentEmail.getSender());
-        System.out.println(rs);
-        sendToTextField.setText(rs);
-        objectEmailTextField.setText("RE: " + currentEmail.getObject());
-        objectEmailTextField.setEditable(false);
-      }
-      default -> {
-        System.out.println("default catch");
-      }
+    if(Constants.REPLY_EMAIL.equalsIgnoreCase(flag)){
+      sendToTextField.setText(currentEmail.getSender());
+      currentEmail.setState(Constants.REPLY_EMAIL);
+      objectEmailTextField.setText("RE: " + currentEmail.getObject());
+      objectEmailTextField.setEditable(false);
+    } else if(Constants.FORWARD_EMAIL.equalsIgnoreCase(flag)) {
+      objectEmailTextField.setText(currentEmail.getObject());
+      objectEmailTextField.setEditable(false);
+      currentEmail.setState(Constants.FORWARD_EMAIL);
+      emailBodyTextArea.setText(currentEmail.getText());
+    } else if(Constants.REPLY_ALL_EMAIL.equalsIgnoreCase(flag)) {
+      currentEmail.setState(Constants.REPLY_ALL_EMAIL);
+      String rs = String.join(",", currentEmail.getReceivers()).replace(c.getEmailAddress(), currentEmail.getSender());
+      sendToTextField.setText(rs);
+      objectEmailTextField.setText("RE: " + currentEmail.getObject());
+      objectEmailTextField.setEditable(false);
     }
   }
 
-  @FXML
-  public void onCancelEmail() {
-    System.out.println("cancel email");
-    this.triggerClose(cancelEmailBtn);
-  }
-
+  /**
+   * Sends the email if the receiver address is formally correct, shows alert message otherwise
+   */
   @FXML
   public void onSendEmail() {
-    System.out.println("send email");
+    // regular expression to check email address
     String regex="^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}";
-    Pattern pattern=Pattern.compile(regex);
+    Pattern pattern = Pattern.compile(regex);
     String[] matcherReceivers = sendToTextField.getText().split(",");
     String wrongEmailAddresses = "";
     boolean flag = true;
     for(String s : matcherReceivers) {
-      Matcher matcher=pattern.matcher(s);
+      Matcher matcher = pattern.matcher(s);
       if(!matcher.matches()) {
         wrongEmailAddresses = wrongEmailAddresses.concat(s+"\n");
         flag = false;
       }
     }
+    // all emails match the pattern of the regular expression
     if(flag) {
-      Email email = new Email();
+      Email email = new Email(controller.getMailbox().getEmailAddress());
       email.setId(System.currentTimeMillis());
-      email.setSender(controller.getMailbox().getEmailAddress());
       email.setDate(new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(new Date()));
-      email.setStato(EmailStateEnum.NEW_EMAIL.toString());
+      email.setState(Constants.NEW_EMAIL);
       email.setReceivers(Arrays.asList(sendToTextField.getText().split(",")));
       email.setText(emailBodyTextArea.getText());
       email.setObject(objectEmailTextField.getText());
+      // send email and close new GUI
       controller.sendEmail(email);
       this.triggerClose(sendEmailBtn);
-    }else{
-      Alert alert=new Alert(Alert.AlertType.WARNING);
+    }
+    // some email is formally wrong
+    else {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
       alert.setHeaderText("Wrong email");
       alert.setTitle("Check Email");
-      alert.setContentText("Email entered is not a valid email address:\n"+wrongEmailAddresses);
-      alert.show();
+      alert.setContentText("Email entered is not a valid email address:\n" + wrongEmailAddresses);
+      alert.showAndWait();
       sendToTextField.requestFocus();
     }
   }
 
-  private void triggerClose(Button source) {
-    Stage stage = (Stage) source.getScene().getWindow();
-    stage.hide();
+  /**
+   * Calls 'triggerClose' to close the new GUI
+   */
+  @FXML
+  public void onCancelEmail() {
+   emailBodyTextArea.setText("");
   }
 
-  public void disableBts(boolean flag) {
-    cancelEmailBtn.setDisable(flag);
-    sendEmailBtn.setDisable(flag);
+  /**
+   * @param source: the cancel GUI button
+   * Closes the new GUI
+   */
+  private void triggerClose(Button source) {
+    Stage stage = (Stage) source.getScene().getWindow();
+    this.mainGuiController.newGuiIsShowing=false;
+    stage.hide();
   }
 }

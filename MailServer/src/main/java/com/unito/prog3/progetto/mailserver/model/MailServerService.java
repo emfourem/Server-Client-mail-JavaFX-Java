@@ -10,61 +10,81 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Merico Michele, Montesi Dennis, Turcan Boris
+ * Represents the Server service
+ */
 public class MailServerService extends Thread{
-  private int port;
-  private ServerGuiController guiController;
+  private final int port;
+  private final ServerGuiController guiController;
   ExecutorService executorService;
   ServerSocket serverSocket;
+
+  /*A boolean variable that will be true when the server is up, false otherwise*/
   private boolean isServiceOn = true;
 
   private final int CORE_MACHINES = 16; //number of cores
 
+  /**
+   * This method is the constructor of MailServerService.
+   * @param port: required to listen to the server on the specific port.
+   * @param guiController: used to pass it to MailClientWorker that otherwise could not use it.
+   */
   public MailServerService(int port, ServerGuiController guiController) {
     this.port = port;
     this.guiController = guiController;
     serverSocket = null;
-    // hook
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      System.out.println("Shutdown server...");
-      // eseguirà la close delle socket
-      try {
-        serverSocket.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }));
   }
 
+  /**
+   * This method overrides a method declaration in a supertype and invokes service method.
+   */
   @Override
   public void run() {
-    System.out.println("Server ready. Port: " + this.port + "\n");
-    this.service();
-  }
-
-  public void service() {
+    System.out.println("Server ready. Port: " + this.port );
     try {
+      this.service();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  /**
+   * This method is the heart of the server as it creates a thread pool
+   * and puts the server listening on the port to accept new connections.
+   */
+  public void service() throws IOException {
+    try {
+      // creates new server socket...
       serverSocket = new ServerSocket(port);
-      executorService= Executors.newFixedThreadPool(CORE_MACHINES);
+      // creates a new executor of a fixed thread pool...
+      executorService = Executors.newFixedThreadPool(CORE_MACHINES);
+      // if service is on...
       while (isServiceOn) {
+        // ...accept new client...
         Socket client = serverSocket.accept();
-        System.out.println("Accepted: " + client);
+        System.out.println("Accept: " + client);
+        // ...then creates new MailWorker that will execute the request
         Runnable task = new MailServerClientWorker(client, guiController);
+        // next line will call start() method on task that will call run()
         executorService.execute(task);
       }
-    } catch (SocketException socketException) {
-      System.out.println("Server GUI close, now I close the server socket");
+    } catch (SocketException ignored) {
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
+  /**
+   * This method is invoked to shut down the executor only after the still active tasks are terminated.
+   */
   public void shutdownMailServerService() {
     if (executorService != null) {
+      // executor will not accept other tasks, it will terminate just the still active ones
+      executorService.shutdown();
       try {
+        // waits 500 ms that active tasks terminate, if some task not terminate executes shutdown
         if (!executorService.awaitTermination(500, TimeUnit.MILLISECONDS)) {
-          executorService.shutdownNow(); // Cancel currently executing tasks
-          if (!executorService.awaitTermination(500, TimeUnit.MILLISECONDS))
-            System.err.println("Pool did not terminate");
+          executorService.shutdownNow();
         }
       } catch (InterruptedException e) {
         executorService.shutdownNow();
@@ -72,10 +92,14 @@ public class MailServerService extends Thread{
     }
   }
 
+  /**
+   * This method is invoked when the GUI is closing and logs out the Server correctly.
+   */
   public void guiIsClosing() {
     this.isServiceOn = false;
     try {
       this.serverSocket.close();
+      System.out.println("ServerSocket close.");
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -83,5 +107,6 @@ public class MailServerService extends Thread{
     if (!this.isInterrupted())  {
       this.interrupt();
     }
+    System.out.println("Shutdown server done. Bye!");
   }
 }

@@ -4,9 +4,7 @@ import com.unito.prog3.progetto.mailclient.controller.ClientController;
 import com.unito.prog3.progetto.model.Constants;
 import com.unito.prog3.progetto.model.Email;
 import com.unito.prog3.progetto.model.Message;
-import com.unito.prog3.progetto.model.ServiceHeaders;
 import javafx.application.Platform;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,113 +13,76 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-
+/**
+ * @author Merico Michele, Montesi Dennis, Turcan Boris
+ * Represents the client service that communicate with server
+ */
 public class MailClientService {
-  private ClientController mailClientController;
-  private Socket socket;
+  private final ClientController mailClientController;  //controller
   private boolean isServiceOn = true;
   private boolean retrieveInboxFirsTry = false;
 
+  /**
+   * @param mailClientController: the controller of the project model
+   */
   public MailClientService(ClientController mailClientController) {
     this.mailClientController = mailClientController;
-    this.socket = null;
-    // hook
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      System.out.println("Shutdown hook");
-    }));
   }
 
-  public void toggleService() {
-    this.isServiceOn = false;
-  }
-
-  public void sendMessage(Message message) {
-    // avvio un thread
-    launchNewThread(message);
-  }
-
-  public void deleteMessage(Message message) {
-    launchNewThread(message);
-  }
-
+  /**
+   * @param message: the message to send to server
+   * Opens a connection with the server
+   */
   public void openConnection(Message message) {
-    // thread che avvisa il server e recupera i dati
-    // apro la socket
-    // recupero i messaggi
-    new Thread(() -> {
-      try {
-        socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
-        // qua la socket c'e'
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        objectOutputStream.writeObject(message);
-        objectOutputStream.flush();
-        // dopo aver notificato...
-        readAndWriteAllEmails();
-        retrieveInboxFirsTry = true;
-      } catch (ConnectException connectException) {
-        disabilitaGuiCta(true);
-        Platform.runLater(() -> {
-          // dico alla gui di mostrare un messaggio di errore, ovvero server DOWN
-        });
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      }
-    }).start();
+    newService(message, true);
+    retrieveInboxFirsTry = true;
   }
 
-  private void readAndWriteAllEmails() throws IOException, ClassNotFoundException {
+  /**
+   * Retrieves all emails and notifies controller to push them if not present
+   */
+  private void readAndWriteAllEmails(Socket socket) throws IOException, ClassNotFoundException {
     ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+    // read all emails...
     ArrayList<Email> emails = (ArrayList<Email>) objectInputStream.readObject();
     for (Email e : emails) {
-      Platform.runLater(() -> {
+      // ...and write if not present
+      Platform.runLater(()->{
         mailClientController.pushIfNotPresent(e);
       });
     }
   }
 
-  public void notifyClientDisconnect(Message message) {
-    this.toggleService();
-    launchNewThread(message);
-  }
-
+  /**
+   * @param message: the message to send to server
+   * Sends periodical requests to server to retrieve new emails
+   */
   public void periodicalEmailsRetrieve(Message message) {
     new Thread(() -> {
       while (this.isServiceOn) {
         try {
-          Thread.sleep(1500);
+          Thread.sleep(5000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-        //
         if(!retrieveInboxFirsTry) {
           Message messageAssist = new Message();
-          messageAssist.setHeader(ServiceHeaders.CONNECTION_REQUEST.toString());
+          messageAssist.setHeader(Constants.CONNECTION_REQUEST);
           messageAssist.setEmail(new Email(message.getEmail().getSender()));
           openConnection(messageAssist);
         }
         else {
-          try {
-            socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
-            disabilitaGuiCta(false);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            // invio la notifica
-            objectOutputStream.writeObject(message);
-            objectOutputStream.flush();
-            // dopo aver notificato il server...
-            readAndWriteAllEmails();
-          } catch (ConnectException connectException) {
-            disabilitaGuiCta(true);
-          } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-          }
+          newService(message, true);
         }
       }
     }).start();
   }
 
-  public void disabilitaGuiCta(boolean flag) {
+  /**
+   * @param flag: the condition to verify in the method
+   * Calls controller method 'notifyServerDown' with parameter flag and if flag is false calls method 'resetAlert'
+   */
+  public void disableGuiCta(boolean flag) {
     Platform.runLater(() -> {
       this.mailClientController.notifyServerDown(flag);
       if (!flag) {
@@ -130,26 +91,64 @@ public class MailClientService {
     });
   }
 
-  public void seenMail(Message message) {
-    launchNewThread(message);
+  /**
+   * @param message: the message to send to server
+   * Turns client service down and launches new thread
+   */
+  public void notifyClientDisconnect(Message message) {
+    this.isServiceOn = false;
+    newService(message, false);
   }
 
-  private void launchNewThread(Message message) {
-    new Thread(() -> {
-      try {
-        socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
-        // qua la socket e' aperta
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        objectOutputStream.writeObject(message);
-        objectOutputStream.flush();
-      } catch (ConnectException connectException) {
-        disabilitaGuiCta(true);
-        Platform.runLater(() -> {
-          // dico alla gui di mostrare un messaggio di errore, ovvero server DOWN
-        });
-      } catch (IOException e) {
+  /**
+   * @param message: the message to send to server
+   * Launches new thread
+   */
+  public void sendMessage(Message message) {
+    newService(message, false);
+  }
+  /**
+   * @param message: the message to send to server
+   * Launches new thread
+   */
+  public void deleteMessage(Message message) {
+    newService(message, false);
+  }
+  /**
+   * @param message: the message to send to server
+   * Launches new thread
+   */
+  public void seenMail(Message message) {
+    newService(message, false);
+  }
+
+  public void newService(Message message, boolean readAndWrite) {
+    Socket socket = null;
+    try {
+      // open connection with server...
+      socket = new Socket(InetAddress.getByName(null), Constants.MAIL_SERVER_PORT);
+      disableGuiCta(false);
+      ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+      // ...then send message
+      objectOutputStream.writeObject(message);
+      objectOutputStream.flush();
+      // if requested retrieve all emails
+      if(readAndWrite) {
+        readAndWriteAllEmails(socket);
+      }
+    } catch (ConnectException connectException) {
+      disableGuiCta(true);
+    } catch (IOException | ClassNotFoundException e) {
+      e.printStackTrace();
+    } finally {
+      try{
+        if(socket != null) {
+          socket.close();
+        }
+      } catch(IOException e) {
         e.printStackTrace();
       }
-    }).start();
+    }
   }
+
 }

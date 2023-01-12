@@ -4,9 +4,12 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.util.LinkedList;
 
+/**
+ * @author Merico Michele, Montesi Dennis, Turcan Boris
+ * Represents the client model
+ */
 public class Client {
   private final ObservableList<String> inboxContent;
   private final SimpleListProperty<String> inbox;

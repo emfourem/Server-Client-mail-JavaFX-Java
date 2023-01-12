@@ -7,30 +7,34 @@ import java.util.List;
 
 /**
  * @author Merico Michele, Montesi Dennis, Turcan Boris
- * Represents a email
+ * Represents an email
  */
 public class Email implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID=1L;
     private long id;
     private String sender;
     private List<String> receivers;
     private String object;
     private String text;
     private String date;
-    private String stato;
+    private String state;
 
-    public Email() {
-
-    }
-
+    /**
+     * @param id: the email id
+     * @param sender: the email sender
+     * @param receivers: the email receivers list
+     * @param object: the email object
+     * @param text: the email text
+     * @param date: the email sending date
+     */
     public Email(long id, String sender, List<String> receivers, String object, String text, Date date) {
         this.id = id;
         this.sender = sender;
         this.receivers = receivers;
         this.object = object;
         this.text = text;
-        this.date = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(date); // >> Gmail
-        this.stato = "not_seen";
+        this.date = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(date);
+        this.state = "not_seen";
     }
 
     public Email(String sender) {
@@ -40,15 +44,11 @@ public class Email implements Serializable {
         this.object = "";
         this.text = "";
         this.date = null;
-        this.stato = "no_email";
+        this.state = "no_email";
     }
 
-    public String getStato() {
-        return stato;
-    }
-
-    public void setStato(String stato) {
-        this.stato = stato;
+    public String getState() {
+        return state;
     }
 
     public long getId() {
@@ -99,6 +99,14 @@ public class Email implements Serializable {
         this.date = date;
     }
 
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    /**
+     * @param o: the email to compare
+     * @return true if the two emails have the same ID, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -108,7 +116,6 @@ public class Email implements Serializable {
     }
 
     /**
-     *
      * @return a string of the sender email and the list of receivers email
      */
     @Override

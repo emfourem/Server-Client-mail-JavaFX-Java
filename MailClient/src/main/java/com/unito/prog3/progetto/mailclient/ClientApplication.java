@@ -3,14 +3,16 @@ package com.unito.prog3.progetto.mailclient;
 import com.unito.prog3.progetto.mailclient.controller.ClientGuiController;
 import com.unito.prog3.progetto.mailclient.controller.ClientController;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
+/**
+ * @author Merico Michele, Montesi Dennis, Turcan Boris
+ * Project Client Application
+ */
 public class ClientApplication extends Application {
   private ClientController clientController;
 
@@ -22,22 +24,13 @@ public class ClientApplication extends Application {
     clientController = new ClientController();
     clientController.setGuiController(controller);
     controller.initialize(clientController);
-    //<WindowEvent can be replaced with <> or lambda expression
-    /*
-    stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-      @Override
-      public void handle(WindowEvent windowEvent) {
-        controller.closeAllChildren();
-        clientController.guiIsClosing();
-      }
-    });
-     */
     stage.setOnCloseRequest(windowEvent -> {
       controller.closeAllChildren();
       clientController.guiIsClosing();
     });
-    stage.setTitle("Mail Client");
+    stage.setTitle("Email Client");
     stage.setScene(scene);
+    stage.setResizable(false);
     stage.show();
   }
 
