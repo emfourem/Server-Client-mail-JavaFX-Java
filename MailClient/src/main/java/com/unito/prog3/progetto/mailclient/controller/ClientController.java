@@ -4,8 +4,6 @@ import com.unito.prog3.progetto.mailclient.model.ClientMailbox;
 import com.unito.prog3.progetto.mailclient.service.MailClientService;
 import com.unito.prog3.progetto.model.*;
 import javafx.application.Platform;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Merico Michele, Montesi Dennis, Turcan Boris
@@ -29,14 +27,6 @@ public class ClientController {
     this.service = new MailClientService(this);
   }
 
-  /**
-   * Opens connection with server and send periodical email retrieve requests
-   */
-  public void startService() {
-    this.openConnection();
-    this.periodicalEmailRequest();
-  }
-
   public void setGuiController(ClientGuiController guiController) {
     this.guiController = guiController;
   }
@@ -46,7 +36,36 @@ public class ClientController {
   }
 
   /**
+   * Opens connection with server and send periodical email retrieve requests
+   */
+  public void startService() {
+    this.openConnection(); //instructs service to open connection with server
+    this.periodicalEmailRequest(); //instructs service to request periodically emails
+  }
+
+  /**
+   * Notify service to send open connection request to server
+   */
+  public void openConnection() {
+    Message message = new Message();
+    message.setHeader(Constants.CONNECTION_REQUEST);
+    message.setEmail(new Email(mailbox.getEmailAddress()));
+    service.openConnection(message);
+  }
+
+  /**
+   * Notify service to send periodical request to server
+   */
+  public void periodicalEmailRequest() {
+    Message message = new Message();
+    message.setHeader(Constants.REQUEST_NEW_EMAILS);
+    message.setEmail(new Email(mailbox.getEmailAddress()));
+    service.periodicalEmailsRetrieve(message);
+  }
+  /**
    * @param email: the email to be checked
+   * Platform.runLater is used in non-GUI thread to update a GUI component:
+   * the event is inserted in a queue of GUI thread and will be handled by it as soon as possible
    */
   private void checkContains(Email email) {
     // if email is present...
@@ -54,13 +73,11 @@ public class ClientController {
       // ...and its state is 'new'...
       if (Constants.NEW_EMAIL.equalsIgnoreCase(email.getState())) {
         // ...notify GUI controller to show alert message...
-        Platform.runLater(() -> {
-          this.guiController.alertNewMessage(email.getSender());
-        });
-        // ...then change state to 'received not seen' ...
+        Platform.runLater(() -> this.guiController.alertNewMessage(email.getSender()));
+        // ...then change state to 'received not seen'...
         Email seen = new Email(this.mailbox.getEmailAddress());
         seen.setId(email.getId());
-        // ... and notify server
+        // ...and notify server
         seenMail(seen, Constants.EMAIL_RECEIVED_NOT_SEEN);
         email.setState(Constants.EMAIL_RECEIVED_NOT_SEEN);
       }
@@ -76,14 +93,14 @@ public class ClientController {
     Message message = new Message();
     message.setHeader(header);
     message.setEmail(email);
-    service.seenMail(message);
+    service.sendMessageService(message);
   }
 
   /**
    * @param email: the email to check
    * Adds the email to mailbox if not present
    */
-  public synchronized void pushIfNotPresent(Email email) {
+  public void pushIfNotPresent(Email email) {
     this.mailbox.addEmailIfNotPresent(email);
     checkContains(email);
   }
@@ -109,7 +126,7 @@ public class ClientController {
     Message message = new Message();
     message.setHeader(Constants.NEW_EMAIL);
     message.setEmail(email);
-    service.sendMessage(message);
+    service.sendMessageService(message);
   }
 
   /**
@@ -123,27 +140,7 @@ public class ClientController {
     Message message = new Message();
     message.setHeader(Constants.DELETE_EMAIL_BY_ID);
     message.setEmail(e);
-    service.deleteMessage(message);
-  }
-
-  /**
-   * Notify service to send open connection request to server
-   */
-  public void openConnection() {
-    Message message = new Message();
-    message.setHeader(Constants.CONNECTION_REQUEST);
-    message.setEmail(new Email(mailbox.getEmailAddress()));
-    service.openConnection(message);
-  }
-
-  /**
-   * Notify service to send periodical request to server
-   */
-  public void periodicalEmailRequest() {
-    Message message = new Message();
-    message.setHeader(Constants.REQUEST_NEW_EMAILS);
-    message.setEmail(new Email(mailbox.getEmailAddress()));
-    service.periodicalEmailsRetrieve(message);
+    service.sendMessageService(message);
   }
 
   /**
@@ -154,10 +151,15 @@ public class ClientController {
     if (flag) {
       // if server is down disable controls and show alert message
       this.guiController.disableControls(true);
+      this.guiController.disableControlsNewGui(true);
       this.guiController.alertInformation();
     } else {
       // else enable mailbox management buttons
       this.guiController.disableDashboardCta(false);
+      this.guiController.disableControlsNewGui(false);
+      if(!this.guiController.newGuiIsShowing){
+        this.guiController.restartCommands();
+      }
     }
   }
 
@@ -168,4 +170,11 @@ public class ClientController {
     this.guiController.resetAlert();
   }
 
+  /**
+   * Checks if server is up
+   * @return true if server is up, false otherwise
+   */
+  public boolean checkServerStatus() {
+    return service.getServerStatus();
+  }
 }

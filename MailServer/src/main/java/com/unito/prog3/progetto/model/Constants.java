@@ -5,7 +5,7 @@ public class Constants {
    * Connection and application constants
    */
   public static int MAIL_SERVER_PORT = 6789;
-  public static String MY_EMAIL_ADDRESS = "boris.turcan@gmail.com";
+  public static String MY_EMAIL_ADDRESS = "michele.merico@gmail.com";
 
   /**
    * Email constant
@@ -13,7 +13,7 @@ public class Constants {
   public static String MAIL_DELETED = "mark_deleted";
 
   /**
-   * Possible email operation that can be done by user
+   * Possible email operations that can be done by user
    */
   public static String NEW_EMAIL = "New Email";
   public static String EMAIL_SEEN = "Seen";

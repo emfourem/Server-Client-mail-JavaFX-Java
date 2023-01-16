@@ -1,16 +1,15 @@
 package com.unito.prog3.progetto.mailserver.controller;
 
-import com.unito.prog3.progetto.mailserver.model.Client;
 import com.unito.prog3.progetto.mailserver.model.MailServerService;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+
 /**
  * @author Merico Michele, Montesi Dennis, Turcan Boris
  * Represents the controller of server GUI
  */
 public class ServerGuiController {
-    private Client clientModel;
     private MailServerService service;
     @FXML
     private ListView<String> idListView;
@@ -19,17 +18,13 @@ public class ServerGuiController {
 
     /**
      * This method initializes the Server Controller.
-     * @param clientModel: required to bind the client’s inbox to the GUI view
-     * @param service: the MailServerService is the Model that will execute the standard services of the Server itself
+     * @param service: the server service
      */
     @FXML
-    public void initialize(Client clientModel, MailServerService service) {
-        if (this.clientModel != null) {
-            throw new IllegalStateException("Client is already defined");
-        }
-        this.clientModel = clientModel;
+    public void initialize(MailServerService service) {
         this.service = service;
-        idListView.itemsProperty().bind(clientModel.inboxProperty());
+        this.idListView.itemsProperty().bind(service.getUserList());
+        this.logTextArea.setEditable(false);
         // next line will call run() and start Server service
         this.service.start();
     }
@@ -47,7 +42,7 @@ public class ServerGuiController {
      */
     @FXML
     public void logLostConnection(String s) {
-        this.logTextArea.appendText("Disconnected: " + s);
+        this.logTextArea.appendText("Disconnected: " + s + "\n");
     }
 
     /**

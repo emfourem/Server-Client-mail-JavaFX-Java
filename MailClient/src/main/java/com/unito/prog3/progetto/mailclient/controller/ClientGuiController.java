@@ -4,18 +4,15 @@ import com.unito.prog3.progetto.mailclient.ClientApplication;
 import com.unito.prog3.progetto.mailclient.model.ClientMailbox;
 import com.unito.prog3.progetto.model.Constants;
 import com.unito.prog3.progetto.model.Email;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Merico Michele, Montesi Dennis, Turcan Boris
@@ -102,7 +99,8 @@ public class ClientGuiController {
     selectedEmail = null;
     accountLabel.setText(this.mailbox.getEmailAddress());
     emailTextArea.setEditable(false);
-    receivedEmailsListView.setCellFactory(cell -> new ListCell<>() {
+    // this method is used to modify automatically some listView graphic properties, and it is used at every change
+    receivedEmailsListView.setCellFactory(cell -> new ListCell<>(){
       @Override
       protected void updateItem(Email email, boolean empty) {
         super.updateItem(email, empty);
@@ -119,12 +117,12 @@ public class ClientGuiController {
       }
     });
     receivedEmailsListView.setOnMouseClicked(this::showSelectedEmail);
+    // binding between the listView and the observableList through the SimpleListProperty
     receivedEmailsListView.itemsProperty().bind(mailbox.inboxProperty());
-    emptyEmail = new Email(-1, "", Arrays.asList(""), "", "", new Date());
+    emptyEmail = new Email(-1, "", List.of(""), "", "", new Date());
     updateDetailView(emptyEmail);
     clientController.startService();
   }
-
   /**
    * @param mouseEvent: an event that invokes the method
    * Notify controller to send request to server to mark email as seen, then updates the view
@@ -143,9 +141,16 @@ public class ClientGuiController {
     //...then update the GUI...
     selectedEmail = email;
     updateDetailView(email);
-    if (email != null) {
-      //...and enable buttons
-      disableControls(newGuiIsShowing);
+    if(clientController.checkServerStatus()) {
+      if (email != null) {
+        //...and enable buttons
+        disableControls(newGuiIsShowing);
+        if(email.getSender().equalsIgnoreCase("no_reply.progetto.prog3@server.it")) {
+          disableAllEmailButtons(true);
+        }
+      }
+    }else{
+        disableControls(true);
     }
   }
 
@@ -154,17 +159,12 @@ public class ClientGuiController {
    * Updates the view with the details of selected email
    */
   protected void updateDetailView(Email email) {
-    /*
-    if(mailbox.mailboxLength()==0){
-      disableAllEmailButtons(true);
-      disableDashboardCta(false);
-    }
-     */
     if (email != null) {
       senderDataLabel.setText(email.getSender());
-      receiverDataLabel.setText(String.join(", ", email.getReceivers()));
+      receiverDataLabel.setText(String.join(",", email.getReceivers()));
       emailObjectDataLabel.setText(email.getObject());
       if (email.getId() == -1) {
+        this.selectedEmail = null;
         dateDataLabel.setText("");
         disableAllEmailButtons(true);
       } else {
@@ -180,7 +180,7 @@ public class ClientGuiController {
   @FXML
   public void onWriteEmail() throws IOException {
     launchNewEmailGui(Constants.NEW_EMAIL, selectedEmail, this);
-    disableControls(newGuiIsShowing);
+    disableControls(true);
   }
 
   /**
@@ -202,7 +202,7 @@ public class ClientGuiController {
   @FXML
   public void onForwardEmail() throws IOException {
     launchNewEmailGui(Constants.FORWARD_EMAIL, selectedEmail,this);
-    disableControls(newGuiIsShowing);
+    disableControls(true);
   }
 
   /**
@@ -212,8 +212,8 @@ public class ClientGuiController {
   public void onDeleteEmail() {
     mailbox.deleteEmail(selectedEmail);
     clientController.deleteEmail(selectedEmail);
-    disableControls(newGuiIsShowing);
     updateDetailView(emptyEmail);
+    disableAllEmailButtons(true);
   }
 
   /**
@@ -222,7 +222,7 @@ public class ClientGuiController {
   @FXML
   public void onReplyAll() throws IOException {
     launchNewEmailGui(Constants.REPLY_ALL_EMAIL, selectedEmail,this);
-    disableControls(newGuiIsShowing);
+    disableControls(true);
   }
 
   /**
@@ -231,7 +231,7 @@ public class ClientGuiController {
   @FXML
   public void onReply() throws IOException {
     launchNewEmailGui(Constants.REPLY_EMAIL, selectedEmail,this);
-    disableControls(newGuiIsShowing);
+    disableControls(true);
   }
 
   /**
@@ -273,20 +273,19 @@ public class ClientGuiController {
    */
   protected void launchNewEmailGui(String c, Email e, ClientGuiController mainGuiController) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(ClientApplication.class.getResource("new_email_gui_mockup.fxml"));
-    newGuiIsShowing=true;
+    newGuiIsShowing = true;
     stage1 = new Stage();
     Scene scene = new Scene(fxmlLoader.load(), 800, 600);
     stage1.setTitle(c);
     stage1.setScene(scene);
     childController = fxmlLoader.getController();
-    childController.initialize(mailbox, c, e, clientController,mainGuiController);
+    childController.initialize(mailbox, c, e, clientController, mainGuiController);
     disableControls(true);
     stage1.setOnCloseRequest(event -> {
-      newGuiIsShowing=false;
+      newGuiIsShowing = false;
       disableAllEmailButtons(selectedEmail == null);
-      disableDashboardCta(false);
-    });
-    stage1.setOnHiding(event -> {
+      writeEmailBtn.setDisable(false);
+      deleteAllBtn.setDisable(false);
     });
     stage1.setResizable(false);
     stage1.show();
@@ -317,8 +316,23 @@ public class ClientGuiController {
    * Sets disable value of mailbox management buttons
    */
   public void disableDashboardCta(boolean flag) {
-    writeEmailBtn.setDisable(flag);
-    deleteAllBtn.setDisable(flag);
+    if(stage1 != null && stage1.isShowing()) {
+      writeEmailBtn.setDisable(true);
+      deleteAllBtn.setDisable(true);
+    }else{
+      writeEmailBtn.setDisable(flag);
+      deleteAllBtn.setDisable(flag);
+    }
+  }
+
+  /**
+   * @param flag: boolean value used by method to set disable values
+   * Sets disable value of new GUI buttons
+   */
+  public void disableControlsNewGui(boolean flag) {
+    if (this.stage1 != null ){
+      childController.disableButtons(flag);
+    }
   }
 
   /**
@@ -327,6 +341,17 @@ public class ClientGuiController {
   public void closeAllChildren() {
     if (this.stage1 != null && stage1.isShowing()) {
       stage1.close();
+    }
+  }
+
+  /**
+   * Disables or enables main GUI email management buttons
+   */
+  public void restartCommands() {
+    if(this.selectedEmail == null) {
+      this.disableAllEmailButtons(true);
+    } else {
+      this.disableAllEmailButtons(this.selectedEmail.getSender().equalsIgnoreCase("no_reply.progetto.prog3@server.it"));
     }
   }
 }

@@ -32,7 +32,7 @@
             <Label text="From:" GridPane.rowIndex="2" />
             <TextField fx:id="objectEmailTextField"  prefHeight="25.0" prefWidth="256.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="fromEmailTextField" editable="false" text="filippo.marinetti@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="sendToTextField" prefHeight="25.0" prefWidth="256.0" GridPane.columnIndex="1" promptText="email1@dom.com, email2@email.com"/>
+            <TextField fx:id="sendToTextField" prefHeight="25.0" prefWidth="256.0" GridPane.columnIndex="1" promptText="Example:email1@dom.com,email2@email.com,email3@example.com"/>
          </children>
          <opaqueInsets>
             <Insets />
@@ -45,7 +45,7 @@
       <TextArea fx:id="emailBodyTextArea" prefHeight="352.0" prefWidth="600.0" />
       <HBox alignment="CENTER" prefHeight="49.0" prefWidth="600.0">
          <children>
-            <Button fx:id="cancelEmailBtn" onAction="#onCancelEmail" mnemonicParsing="false" text="Cancel">
+            <Button fx:id="clearTextBtn" onAction="#onCancelEmail" mnemonicParsing="false" text="Cancel">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin>

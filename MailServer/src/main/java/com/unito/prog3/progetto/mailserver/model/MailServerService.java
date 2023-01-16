@@ -1,11 +1,15 @@
 package com.unito.prog3.progetto.mailserver.model;
 
 import com.unito.prog3.progetto.mailserver.controller.ServerGuiController;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +29,10 @@ public class MailServerService extends Thread{
 
   private final int CORE_MACHINES = 16; //number of cores
 
+  private ObservableList<String> userList; // observable list of active users
+
+  private SimpleListProperty<String> userListProperty; // property of userList
+
   /**
    * This method is the constructor of MailServerService.
    * @param port: required to listen to the server on the specific port.
@@ -33,7 +41,17 @@ public class MailServerService extends Thread{
   public MailServerService(int port, ServerGuiController guiController) {
     this.port = port;
     this.guiController = guiController;
-    serverSocket = null;
+    this.serverSocket = null;
+    this.userListProperty = new SimpleListProperty<>();
+    this.userList = FXCollections.observableArrayList(new LinkedList<>());
+    this.userListProperty.set(userList);
+  }
+
+  /**
+   * @return the user list property
+   */
+  public SimpleListProperty<String> getUserList() {
+    return this.userListProperty;
   }
 
   /**
@@ -109,4 +127,5 @@ public class MailServerService extends Thread{
     }
     System.out.println("Shutdown server done. Bye!");
   }
+
 }

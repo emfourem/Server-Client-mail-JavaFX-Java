@@ -60,10 +60,11 @@ public class NewEmailGuiController {
    */
   @FXML
   public void initialize(ClientMailbox c, String flag, Email currentEmail, ClientController controller, ClientGuiController  mainGuiController) {
+    //necessary to retrieve email address of client
     this.mailClient = c;
     this.controller = controller;
-    this.mainGuiController=mainGuiController;
-    this.flag=flag;
+    this.mainGuiController = mainGuiController;
+    this.flag = flag;
     fromEmailTextField.setText(mailClient.getEmailAddress());
     if(Constants.REPLY_EMAIL.equalsIgnoreCase(flag)){
       sendToTextField.setText(currentEmail.getSender());
@@ -114,6 +115,9 @@ public class NewEmailGuiController {
       // send email and close new GUI
       controller.sendEmail(email);
       this.triggerClose(sendEmailBtn);
+      // enable main GUI buttons
+      this.mainGuiController.disableDashboardCta(false);
+      this.mainGuiController.restartCommands();
     }
     // some email is formally wrong
     else {
@@ -127,7 +131,7 @@ public class NewEmailGuiController {
   }
 
   /**
-   * Calls 'triggerClose' to close the new GUI
+   * Delete the text in the body
    */
   @FXML
   public void onCancelEmail() {
@@ -140,7 +144,16 @@ public class NewEmailGuiController {
    */
   private void triggerClose(Button source) {
     Stage stage = (Stage) source.getScene().getWindow();
-    this.mainGuiController.newGuiIsShowing=false;
+    this.mainGuiController.newGuiIsShowing = false;
     stage.hide();
+  }
+
+  /**
+   * @param flag: boolean value used by method to set disable values
+   * Sets disable value of new GUI buttons
+   */
+  public void disableButtons(boolean flag) {
+    clearTextBtn.setDisable(flag);
+    sendEmailBtn.setDisable(flag);
   }
 }

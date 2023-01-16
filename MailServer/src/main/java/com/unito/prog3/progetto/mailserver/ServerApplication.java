@@ -1,7 +1,6 @@
 package com.unito.prog3.progetto.mailserver;
 
 import com.unito.prog3.progetto.mailserver.controller.ServerGuiController;
-import com.unito.prog3.progetto.mailserver.model.Client;
 import com.unito.prog3.progetto.mailserver.model.MailServerService;
 import com.unito.prog3.progetto.model.Constants;
 import javafx.application.Application;
@@ -19,10 +18,9 @@ public class ServerApplication extends Application {
   public void start(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(ServerApplication.class.getResource("server_gui.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 700, 500);
-    ServerGuiController controller = fxmlLoader.getController();
-    MailServerService service = new MailServerService(Constants.MAIL_SERVER_PORT, controller);
-    Client c = new Client("MMT");
-    controller.initialize(c, service);
+    ServerGuiController guiController = fxmlLoader.getController();
+    MailServerService service = new MailServerService(Constants.MAIL_SERVER_PORT, guiController);
+    guiController.initialize(service);
     stage.setOnCloseRequest(windowEvent -> service.guiIsClosing());
     stage.setTitle("Email Server");
     stage.setResizable(false);

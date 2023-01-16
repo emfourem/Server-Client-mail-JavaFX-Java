@@ -6,7 +6,6 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.util.LinkedList;
 
 /**
@@ -17,10 +16,12 @@ import java.util.LinkedList;
 public class ClientMailbox {
   /**
    * ObservableList and properties
+   * The observableList is linked to the ListView through the binding with the SimpleListProperty
+   * If the observableList is modified also the ListView is modified
    */
   private final ObservableList<Email> inboxContent;
   private final SimpleListProperty<Email> inbox;
-  private final SimpleStringProperty emailAddress;
+  private final String emailAddress;
 
   /**
    * @param email: the user account email
@@ -29,11 +30,11 @@ public class ClientMailbox {
     this.inbox = new SimpleListProperty<>();
     this.inboxContent = FXCollections.observableArrayList(new LinkedList<>());
     this.inbox.set(inboxContent);
-    this.emailAddress = new SimpleStringProperty(email);
+    this.emailAddress = email;
   }
 
   public String getEmailAddress() {
-    return emailAddress.get();
+    return emailAddress;
   }
 
   public SimpleListProperty<Email> inboxProperty() {
@@ -61,7 +62,7 @@ public class ClientMailbox {
    */
   public void deleteEmail(Email e) {
     e.setState(Constants.MAIL_DELETED);
-    this.inbox.remove(e);
+    this.inboxContent.remove(e);
   }
 
   /**
@@ -81,7 +82,5 @@ public class ClientMailbox {
   public boolean contains(Email email) {
     return this.inboxContent.contains(email);
   }
-  /*public int mailboxLength() {
-    return this.inboxContent.size();
-  }*/
+
 }

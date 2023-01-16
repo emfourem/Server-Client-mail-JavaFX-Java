@@ -17,7 +17,7 @@ import java.util.List;
  * @author Merico Michele, Montesi Dennis, Turcan Boris
  * Represents the server worker that manages a client reqeust
  */
-public class MailServerClientWorker extends Thread {
+public class MailServerClientWorker implements Runnable {
   private final Socket socket;
   private final ServerGuiController guiController;
   private String emailSender;
@@ -55,8 +55,8 @@ public class MailServerClientWorker extends Thread {
         retrieveThenSendEmails(emailSender, false);
       } else if (Constants.CONNECTION_CLOSED.equalsIgnoreCase(header)) {
         Platform.runLater(() -> {
-          this.guiController.logLostConnection(socket + "\n");
-          this.guiController.logLostClient(emailSender + "\n");
+          this.guiController.logLostConnection(socket.toString());
+          this.guiController.logLostClient(emailSender);
         });
       } else if (Constants.NEW_EMAIL.equalsIgnoreCase(header)) {
         receiveMailThenStore(message.getEmail());
@@ -69,6 +69,9 @@ public class MailServerClientWorker extends Thread {
       } else if (Constants.EMAIL_RECEIVED_NOT_SEEN.equalsIgnoreCase(header)) {
         MyFileWriterService.markAs(message.getEmail(), Constants.EMAIL_RECEIVED_NOT_SEEN);
       }
+      System.out.println("Close: " + socket);
+      objectInputStream.close();
+      socket.close();
     } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
@@ -148,7 +151,5 @@ public class MailServerClientWorker extends Thread {
     objectOutputStream.writeObject(inbox);
     objectOutputStream.flush();
     // flush guarantees that data will be available to client, so then the socket is closed
-    System.out.println("Close: " + socket);
-    socket.close();
   }
 }

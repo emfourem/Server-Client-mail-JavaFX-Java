@@ -20,12 +20,12 @@ public class ClientApplication extends Application {
   public void start(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(ClientApplication.class.getResource("main_gui_mockup.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-    ClientGuiController controller = fxmlLoader.getController();
+    ClientGuiController guiController = fxmlLoader.getController();
     clientController = new ClientController();
-    clientController.setGuiController(controller);
-    controller.initialize(clientController);
+    clientController.setGuiController(guiController);
+    guiController.initialize(clientController);
     stage.setOnCloseRequest(windowEvent -> {
-      controller.closeAllChildren();
+      guiController.closeAllChildren();
       clientController.guiIsClosing();
     });
     stage.setTitle("Email Client");
