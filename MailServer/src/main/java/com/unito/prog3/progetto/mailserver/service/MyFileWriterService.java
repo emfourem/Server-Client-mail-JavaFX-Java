@@ -1,6 +1,6 @@
 package com.unito.prog3.progetto.mailserver.service;
 
-import com.unito.prog3.progetto.model.Email;
+import com.unito.prog3.progetto.externmodel.Email;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -15,15 +15,13 @@ public class MyFileWriterService {
    * @param email: the email of client that made the request
    * @return a list of received client emails
    */
-  public static synchronized ArrayList<Email> retrieveMails(String email) throws IOException, ClassNotFoundException {
+  public ArrayList<Email> retrieveMails(String email) throws IOException, ClassNotFoundException {
     File mailbox = new File("database/".concat(email.replace("@gmail.com","").concat(".dat")));
     ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(mailbox));
     Object o = objectInputStream.readObject();
     objectInputStream.close();
     ArrayList<Email> emails = new ArrayList<>();
-    if(o != null && o.getClass() == emails.getClass()){
-      emails = (ArrayList<Email>) o;
-    }
+    if(o != null && o.getClass() == emails.getClass()) emails = (ArrayList<Email>) o;
     return emails;
   }
 
@@ -31,7 +29,7 @@ public class MyFileWriterService {
    * Creates a new mailbox for the client
    * @param emailSender: the new client whose mailbox must be created
    */
-  public static synchronized void createMailbox(String emailSender) throws IOException {
+  public void createMailbox(String emailSender) throws IOException {
     // mailbox is the file to be opened for writing
     File mailbox = new File("database/".concat(emailSender.replace("@gmail.com","").concat(".dat")));
     if (mailbox.createNewFile()) {
@@ -49,7 +47,7 @@ public class MyFileWriterService {
    * @param email: the email to be written
    * @return a list of not found receivers
    */
-  public static synchronized ArrayList<String> writeEmail(Email email) throws IOException, ClassNotFoundException {
+  public ArrayList<String> writeEmail(Email email) throws IOException, ClassNotFoundException {
     ArrayList<String> destNotFound = new ArrayList<>();
     for (String s : email.getReceivers()) {
       File mailbox = new File("database/".concat(s.replace("@gmail.com","").concat(".dat")));
@@ -72,7 +70,7 @@ public class MyFileWriterService {
    * @param email: the client owner of the mailbox
    * @param emails: the emails updated of client
    */
-  public static synchronized void updateMailboxOf(String email, ArrayList<Email> emails) throws IOException{
+  public void updateMailboxOf(String email, ArrayList<Email> emails) throws IOException{
     File mailbox = new File("database/".concat(email.replace("@gmail.com","").concat(".dat")));
     ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(mailbox));
     objectOutputStream.writeObject(emails);
@@ -84,7 +82,7 @@ public class MyFileWriterService {
    * Deletes the email from client mailbox
    * @param email: the email to be deleted
    */
-  public static synchronized void deleteEmail(Email email) throws IOException, ClassNotFoundException {
+  public void deleteEmail(Email email) throws IOException, ClassNotFoundException {
     ArrayList<Email> emailsOf = retrieveMails(email.getSender());
     emailsOf.remove(email);
     updateMailboxOf(email.getSender(), emailsOf);
@@ -95,7 +93,7 @@ public class MyFileWriterService {
    * @param email: the email to be marked as the head value
    * @param head: the value of the email state
    */
-  public static synchronized void markAs(Email email, String head) throws IOException, ClassNotFoundException {
+  public void markAs(Email email, String head) throws IOException, ClassNotFoundException {
     ArrayList<Email> emails = retrieveMails(email.getSender());
     for (Email e : emails) {
       if (e.getId() == email.getId()) {

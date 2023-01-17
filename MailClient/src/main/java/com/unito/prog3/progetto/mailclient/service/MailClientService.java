@@ -1,9 +1,9 @@
 package com.unito.prog3.progetto.mailclient.service;
 
 import com.unito.prog3.progetto.mailclient.controller.ClientController;
-import com.unito.prog3.progetto.model.Constants;
-import com.unito.prog3.progetto.model.Email;
-import com.unito.prog3.progetto.model.Message;
+import com.unito.prog3.progetto.externmodel.Constants;
+import com.unito.prog3.progetto.externmodel.Email;
+import com.unito.prog3.progetto.externmodel.Message;
 import javafx.application.Platform;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -40,12 +40,6 @@ public class MailClientService {
   public boolean getServerStatus(){
     return this.serverUp;
   }
-
-  /**
-   * Gets the service status
-   * @return true if isServiceOn is true, false otherwise
-   */
-  public boolean getIsServiceOn() { return this.isServiceOn; }
 
   /**
    * @param message: the message to send to server
@@ -171,7 +165,7 @@ public class MailClientService {
 
     @Override
     public void run() {
-      while (getIsServiceOn()) {
+      while (isServiceOn) {
         try {
           Thread.sleep(5000);
         } catch (InterruptedException e) {

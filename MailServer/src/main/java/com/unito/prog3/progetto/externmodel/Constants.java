@@ -1,4 +1,4 @@
-package com.unito.prog3.progetto.model;
+package com.unito.prog3.progetto.externmodel;
 
 public class Constants {
   /**
@@ -6,11 +6,6 @@ public class Constants {
    */
   public static int MAIL_SERVER_PORT = 6789;
   public static String MY_EMAIL_ADDRESS = "michele.merico@gmail.com";
-
-  /**
-   * Email constant
-   */
-  public static String MAIL_DELETED = "mark_deleted";
 
   /**
    * Possible email operations that can be done by user

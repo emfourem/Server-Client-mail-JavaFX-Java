@@ -1,6 +1,7 @@
 package com.unito.prog3.progetto.mailserver.model;
 
 import com.unito.prog3.progetto.mailserver.controller.ServerGuiController;
+import com.unito.prog3.progetto.mailserver.service.MyFileWriterService;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +24,7 @@ public class MailServerService extends Thread{
   private final ServerGuiController guiController;
   ExecutorService executorService;
   ServerSocket serverSocket;
+  MyFileWriterService writerService;
 
   /*A boolean variable that will be true when the server is up, false otherwise*/
   private boolean isServiceOn = true;
@@ -45,6 +47,7 @@ public class MailServerService extends Thread{
     this.userListProperty = new SimpleListProperty<>();
     this.userList = FXCollections.observableArrayList(new LinkedList<>());
     this.userListProperty.set(userList);
+    this.writerService = new MyFileWriterService();
   }
 
   /**
@@ -82,7 +85,7 @@ public class MailServerService extends Thread{
         Socket client = serverSocket.accept();
         System.out.println("Accept: " + client);
         // ...then creates new MailWorker that will execute the request
-        Runnable task = new MailServerClientWorker(client, guiController);
+        Runnable task = new MailServerClientWorker(client, guiController, writerService);
         // next line will call start() method on task that will call run()
         executorService.execute(task);
       }

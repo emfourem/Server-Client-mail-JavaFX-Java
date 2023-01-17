@@ -2,7 +2,7 @@ package com.unito.prog3.progetto.mailclient.controller;
 
 import com.unito.prog3.progetto.mailclient.model.ClientMailbox;
 import com.unito.prog3.progetto.mailclient.service.MailClientService;
-import com.unito.prog3.progetto.model.*;
+import com.unito.prog3.progetto.externmodel.*;
 import javafx.application.Platform;
 
 /**

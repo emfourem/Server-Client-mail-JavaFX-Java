@@ -1,16 +1,16 @@
-package com.unito.prog3.progetto.model;
+package com.unito.prog3.progetto.externmodel;
+
+/**
+ * @author Merico Michele, Montesi Dennis, Turcan Boris
+ * Represents the costants used in the project
+ */
 
 public class Constants {
   /**
    * Connection and application constants
    */
   public static int MAIL_SERVER_PORT = 6789;
-  public static String MY_EMAIL_ADDRESS = "michele.merico@gmail.com";
-
-  /**
-   * Email constant
-   */
-  public static String MAIL_DELETED = "mark_deleted";
+  public static String MY_EMAIL_ADDRESS = "dennis.montesi@gmail.com";
 
   /**
    * Possible email operations that can be done by user

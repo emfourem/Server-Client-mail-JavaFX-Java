@@ -2,7 +2,7 @@ package com.unito.prog3.progetto.mailserver;
 
 import com.unito.prog3.progetto.mailserver.controller.ServerGuiController;
 import com.unito.prog3.progetto.mailserver.model.MailServerService;
-import com.unito.prog3.progetto.model.Constants;
+import com.unito.prog3.progetto.externmodel.Constants;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -2,8 +2,8 @@ package com.unito.prog3.progetto.mailclient.controller;
 
 import com.unito.prog3.progetto.mailclient.ClientApplication;
 import com.unito.prog3.progetto.mailclient.model.ClientMailbox;
-import com.unito.prog3.progetto.model.Constants;
-import com.unito.prog3.progetto.model.Email;
+import com.unito.prog3.progetto.externmodel.Constants;
+import com.unito.prog3.progetto.externmodel.Email;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -118,7 +118,7 @@ public class ClientGuiController {
     });
     receivedEmailsListView.setOnMouseClicked(this::showSelectedEmail);
     // binding between the listView and the observableList through the SimpleListProperty
-    receivedEmailsListView.itemsProperty().bind(mailbox.inboxProperty());
+    receivedEmailsListView.itemsProperty().bind(mailbox.getInboxProperty());
     emptyEmail = new Email(-1, "", List.of(""), "", "", new Date());
     updateDetailView(emptyEmail);
     clientController.startService();
@@ -189,7 +189,7 @@ public class ClientGuiController {
   @FXML
   public void onDeleteAllEmails() {
     disableAllEmailButtons(true);
-    for (Email email : this.mailbox.inboxProperty().get()) {
+    for (Email email : this.mailbox.getInboxProperty().get()) {
       clientController.deleteEmail(email);
     }
     mailbox.emptyInbox();
@@ -283,7 +283,7 @@ public class ClientGuiController {
     disableControls(true);
     stage1.setOnCloseRequest(event -> {
       newGuiIsShowing = false;
-      disableAllEmailButtons(selectedEmail == null);
+      disableAllEmailButtons(selectedEmail == null || this.selectedEmail.getSender().equalsIgnoreCase("no_reply.progetto.prog3@server.it"));
       writeEmailBtn.setDisable(false);
       deleteAllBtn.setDisable(false);
     });

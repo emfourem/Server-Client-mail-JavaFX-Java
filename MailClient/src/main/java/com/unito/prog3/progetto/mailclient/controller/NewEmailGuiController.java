@@ -1,8 +1,8 @@
 package com.unito.prog3.progetto.mailclient.controller;
 
 import com.unito.prog3.progetto.mailclient.model.ClientMailbox;
-import com.unito.prog3.progetto.model.Constants;
-import com.unito.prog3.progetto.model.Email;
+import com.unito.prog3.progetto.externmodel.Constants;
+import com.unito.prog3.progetto.externmodel.Email;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;

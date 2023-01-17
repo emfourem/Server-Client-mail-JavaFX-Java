@@ -1,9 +1,7 @@
 package com.unito.prog3.progetto.mailclient.model;
 
-import com.unito.prog3.progetto.model.Constants;
-import com.unito.prog3.progetto.model.Email;
+import com.unito.prog3.progetto.externmodel.Email;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.LinkedList;
@@ -37,7 +35,7 @@ public class ClientMailbox {
     return emailAddress;
   }
 
-  public SimpleListProperty<Email> inboxProperty() {
+  public SimpleListProperty<Email> getInboxProperty() {
     return inbox;
   }
 
@@ -61,7 +59,6 @@ public class ClientMailbox {
    * Removes the email from the inbox
    */
   public void deleteEmail(Email e) {
-    e.setState(Constants.MAIL_DELETED);
     this.inboxContent.remove(e);
   }
 

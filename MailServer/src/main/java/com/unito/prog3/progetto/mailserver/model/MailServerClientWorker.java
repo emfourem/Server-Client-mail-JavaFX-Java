@@ -2,9 +2,9 @@ package com.unito.prog3.progetto.mailserver.model;
 
 import com.unito.prog3.progetto.mailserver.controller.ServerGuiController;
 import com.unito.prog3.progetto.mailserver.service.MyFileWriterService;
-import com.unito.prog3.progetto.model.Constants;
-import com.unito.prog3.progetto.model.Email;
-import com.unito.prog3.progetto.model.Message;
+import com.unito.prog3.progetto.externmodel.Constants;
+import com.unito.prog3.progetto.externmodel.Email;
+import com.unito.prog3.progetto.externmodel.Message;
 import javafx.application.Platform;
 import java.io.*;
 import java.net.Socket;
@@ -20,18 +20,22 @@ import java.util.List;
 public class MailServerClientWorker implements Runnable {
   private final Socket socket;
   private final ServerGuiController guiController;
+  private final MyFileWriterService writerService;
   private String emailSender;
   private ArrayList<Email> inbox;
 
   /**
    * The constructor of the worker
-   * @param socket: socket used to communicate with client
-   * @param guiController: the controller of server GUI
+   *
+   * @param socket        : socket used to communicate with client
+   * @param guiController : the controller of server GUI
+   * @param writerService : the server file writer service
    */
-  public MailServerClientWorker(Socket socket, ServerGuiController guiController) {
+  public MailServerClientWorker(Socket socket, ServerGuiController guiController, MyFileWriterService writerService) {
     this.socket = socket;
     this.guiController = guiController;
     this.inbox = new ArrayList<>();
+    this.writerService = writerService;
   }
 
   @Override
@@ -48,26 +52,38 @@ public class MailServerClientWorker implements Runnable {
           this.guiController.logNewClient(this.emailSender);
         });
         // mailbox will be created only at first client connection request
-        MyFileWriterService.createMailbox(emailSender);
         // makes available all messages received on client GUI send them to him
         // needFilter will be true only when request is not connection_request,
         // because in this case all emails must be sent, otherwise only the new ones.
-        retrieveThenSendEmails(emailSender, false);
+        synchronized (this.writerService){
+          writerService.createMailbox(emailSender);
+          retrieveThenSendEmails(emailSender, false);
+        }
       } else if (Constants.CONNECTION_CLOSED.equalsIgnoreCase(header)) {
         Platform.runLater(() -> {
           this.guiController.logLostConnection(socket.toString());
           this.guiController.logLostClient(emailSender);
         });
       } else if (Constants.NEW_EMAIL.equalsIgnoreCase(header)) {
-        receiveMailThenStore(message.getEmail());
+        synchronized (this.writerService){
+          receiveMailThenStore(message.getEmail());
+        }
       } else if (Constants.DELETE_EMAIL_BY_ID.equalsIgnoreCase(header)) {
-        MyFileWriterService.deleteEmail(message.getEmail());
+        synchronized (this.writerService){
+          writerService.deleteEmail(message.getEmail());
+        }
       } else if (Constants.REQUEST_NEW_EMAILS.equalsIgnoreCase(header)) {
-        retrieveThenSendEmails(emailSender, true);
+        synchronized (this.writerService){
+          retrieveThenSendEmails(emailSender, false);
+        }
       } else if (Constants.REQUEST_MARK_EMAIL_AS_SEEN.equalsIgnoreCase(header)) {
-        MyFileWriterService.markAs(message.getEmail(), Constants.REQUEST_MARK_EMAIL_AS_SEEN);
+        synchronized (this.writerService){
+          writerService.markAs(message.getEmail(), Constants.REQUEST_MARK_EMAIL_AS_SEEN);
+        }
       } else if (Constants.EMAIL_RECEIVED_NOT_SEEN.equalsIgnoreCase(header)) {
-        MyFileWriterService.markAs(message.getEmail(), Constants.EMAIL_RECEIVED_NOT_SEEN);
+        synchronized (this.writerService){
+          writerService.markAs(message.getEmail(), Constants.EMAIL_RECEIVED_NOT_SEEN);
+        }
       }
       System.out.println("Close: " + socket);
       objectInputStream.close();
@@ -89,7 +105,7 @@ public class MailServerClientWorker implements Runnable {
     String finalDest = dest.toString();
     Platform.runLater(() -> this.guiController.logMessageSend("New message from [" + email.getSender() + "] to " + finalDest + "\n"));
     // notFound will contain not found receivers
-    ArrayList<String> notFound = MyFileWriterService.writeEmail(email);
+    ArrayList<String> notFound = writerService.writeEmail(email);
     if (notFound.size() > 0) {
       writeNoReply(email.getSender(), notFound);
     }
@@ -120,7 +136,7 @@ public class MailServerClientWorker implements Runnable {
     noReply.setId(System.currentTimeMillis());
     noReply.setState(Constants.NEW_EMAIL);
     noReply.setDate(new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(new Date()));
-    MyFileWriterService.writeEmail(noReply);
+    writerService.writeEmail(noReply);
   }
 
   /**
@@ -129,7 +145,7 @@ public class MailServerClientWorker implements Runnable {
    * @param needFilter: boolean value used to check when filter messages
    */
   private void retrieveThenSendEmails(String emailSender, boolean needFilter) throws IOException, ClassNotFoundException {
-    ArrayList<Email> allEmails = MyFileWriterService.retrieveMails(emailSender);
+    ArrayList<Email> allEmails = writerService.retrieveMails(emailSender);
     // filters messages only when connection is already established and client requests only new messages
     if (needFilter) {
       for (Email e : allEmails) {
