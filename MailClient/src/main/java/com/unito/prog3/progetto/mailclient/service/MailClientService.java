@@ -194,7 +194,7 @@ public class MailClientService {
             objectOutputStream.close();
           } catch (ConnectException connectException) {
             disableGuiCta(true);
-            // to update if server goes down again
+            // to update client and server log if server goes down again
             retrieveInboxFirsTry = false;
             serverUp = false;
           } catch (IOException | ClassNotFoundException e) {

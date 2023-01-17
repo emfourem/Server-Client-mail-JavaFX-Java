@@ -10,7 +10,7 @@ public class Constants {
    * Connection and application constants
    */
   public static int MAIL_SERVER_PORT = 6789;
-  public static String MY_EMAIL_ADDRESS = "dennis.montesi@gmail.com";
+  public static String MY_EMAIL_ADDRESS = "michele.merico@gmail.com";
 
   /**
    * Possible email operations that can be done by user

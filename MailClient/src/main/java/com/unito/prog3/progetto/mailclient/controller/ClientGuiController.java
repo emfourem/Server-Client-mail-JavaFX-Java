@@ -147,6 +147,7 @@ public class ClientGuiController {
         disableControls(newGuiIsShowing);
         if(email.getSender().equalsIgnoreCase("no_reply.progetto.prog3@server.it")) {
           disableAllEmailButtons(true);
+          this.deleteBtn.setDisable(newGuiIsShowing);
         }
       }
     }else{
@@ -284,8 +285,11 @@ public class ClientGuiController {
     stage1.setOnCloseRequest(event -> {
       newGuiIsShowing = false;
       disableAllEmailButtons(selectedEmail == null || this.selectedEmail.getSender().equalsIgnoreCase("no_reply.progetto.prog3@server.it"));
-      writeEmailBtn.setDisable(false);
-      deleteAllBtn.setDisable(false);
+      if(this.selectedEmail != null && this.selectedEmail.getSender().equalsIgnoreCase("no_reply.progetto.prog3@server.it")){
+        this.deleteBtn.setDisable(!clientController.checkServerStatus());
+      }
+      writeEmailBtn.setDisable(!clientController.checkServerStatus());
+      deleteAllBtn.setDisable(!clientController.checkServerStatus());
     });
     stage1.setResizable(false);
     stage1.show();
@@ -352,6 +356,9 @@ public class ClientGuiController {
       this.disableAllEmailButtons(true);
     } else {
       this.disableAllEmailButtons(this.selectedEmail.getSender().equalsIgnoreCase("no_reply.progetto.prog3@server.it"));
+      if (this.selectedEmail.getSender().equalsIgnoreCase("no_reply.progetto.prog3@server.it")){
+        this.deleteBtn.setDisable(false);
+      }
     }
   }
 }
