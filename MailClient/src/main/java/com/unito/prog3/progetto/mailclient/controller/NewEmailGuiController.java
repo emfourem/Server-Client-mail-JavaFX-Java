@@ -70,17 +70,19 @@ public class NewEmailGuiController {
       sendToTextField.setText(currentEmail.getSender());
       currentEmail.setState(Constants.REPLY_EMAIL);
       objectEmailTextField.setText("RE: " + currentEmail.getObject());
+      emailBodyTextArea.setText("\n\n<< "+ currentEmail.getText()+ " >>");
       objectEmailTextField.setEditable(false);
     } else if(Constants.FORWARD_EMAIL.equalsIgnoreCase(flag)) {
       objectEmailTextField.setText(currentEmail.getObject());
       objectEmailTextField.setEditable(false);
       currentEmail.setState(Constants.FORWARD_EMAIL);
-      emailBodyTextArea.setText(currentEmail.getText());
+      emailBodyTextArea.setText("Forward email written by "+currentEmail.getSender()+"\n << "+currentEmail.getText()+" >>");
     } else if(Constants.REPLY_ALL_EMAIL.equalsIgnoreCase(flag)) {
       currentEmail.setState(Constants.REPLY_ALL_EMAIL);
       String rs = String.join(",", currentEmail.getReceivers()).replace(c.getEmailAddress(), currentEmail.getSender());
       sendToTextField.setText(rs);
       objectEmailTextField.setText("RE: " + currentEmail.getObject());
+      emailBodyTextArea.setText("\n\n<< "+ currentEmail.getText()+ " >>");
       objectEmailTextField.setEditable(false);
     }
   }

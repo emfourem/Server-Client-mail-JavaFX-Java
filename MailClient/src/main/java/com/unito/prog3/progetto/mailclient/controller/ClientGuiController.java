@@ -276,7 +276,7 @@ public class ClientGuiController {
     FXMLLoader fxmlLoader = new FXMLLoader(ClientApplication.class.getResource("new_email_gui_mockup.fxml"));
     newGuiIsShowing = true;
     stage1 = new Stage();
-    Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+    Scene scene = new Scene(fxmlLoader.load(), 500, 500);
     stage1.setTitle(c);
     stage1.setScene(scene);
     childController = fxmlLoader.getController();
