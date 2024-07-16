@@ -1,2 +1,2 @@
-# prog3
-Progetto di programmazione 3
+# Mail-Server and Mail-client
+Progetto relativo al corso di programmazione 3.
